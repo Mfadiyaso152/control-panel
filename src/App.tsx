@@ -20,7 +20,11 @@ import {
   saveCloudSplits,
   subscribeCloudOrders,
   subscribeCloudRevenues,
-  subscribeCloudSplits
+  subscribeCloudSplits,
+  logoutUser,
+  onAuthStateChanged,
+  isReady,
+  auth
 } from './firebase';
 
 export default function App() {
@@ -85,6 +89,19 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('saudicore_lang_v2', language);
   }, [language]);
+
+  // Firebase Auth Listener Effect
+  useEffect(() => {
+    if (isReady && auth) {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (user) {
+          localStorage.setItem('saudicore_auth_session', 'true');
+          setIsAuthenticated(true);
+        }
+      });
+      return () => unsubscribe();
+    }
+  }, []);
 
   // Firebase Runtime Real-time Cloud Sync Effect
   useEffect(() => {
@@ -217,7 +234,8 @@ export default function App() {
 
           <div className="flex items-center gap-2">
             <button
-              onClick={() => {
+              onClick={async () => {
+                await logoutUser();
                 localStorage.removeItem('saudicore_auth_session');
                 setIsAuthenticated(false);
               }}

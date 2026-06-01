@@ -1,5 +1,11 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { 
+  getAuth, 
+  signInWithPopup, 
+  GoogleAuthProvider, 
+  signOut, 
+  onAuthStateChanged 
+} from 'firebase/auth';
 import { 
   getFirestore, 
   doc, 
@@ -21,8 +27,8 @@ const firebaseConfig = {
   projectId: "saudicore",
   storageBucket: "saudicore.firebasestorage.app",
   messagingSenderId: "480635618160",
-  appId: "1:480635618160:web:4369d494fa006d42be45b5",
-  measurementId: "G-K1B35KEK5J"
+  appId: "1:480635618160:web:7b6344c7686b277abe45b5",
+  measurementId: "G-JZGWM8600H"
 };
 
 // Initialize Firebase SDK
@@ -44,6 +50,29 @@ try {
 export const db = dbInstance!;
 export const auth = authInstance!;
 export const isReady = isFirebaseAvailable;
+
+export async function loginWithGoogle() {
+  if (!isFirebaseAvailable || !authInstance) return null;
+  const provider = new GoogleAuthProvider();
+  try {
+    const result = await signInWithPopup(authInstance, provider);
+    return result.user;
+  } catch (error) {
+    console.error("Error signing in with Google:", error);
+    throw error;
+  }
+}
+
+export async function logoutUser() {
+  if (!isFirebaseAvailable || !authInstance) return;
+  try {
+    await signOut(authInstance);
+  } catch (error) {
+    console.error("Error signing out:", error);
+  }
+}
+
+export { onAuthStateChanged };
 
 // ABAC & Zero-Trust Firestore Error Handling Logger
 export enum OperationType {
