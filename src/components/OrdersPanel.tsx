@@ -65,7 +65,7 @@ export default function OrdersPanel({
 
   // Floating messages drawer inside order card
   const [activeMessagingOrderId, setActiveMessagingOrderId] = useState<string | null>(null);
-  const [selectedMessageTemplate, setSelectedMessageTemplate] = useState<'progress50' | 'completed100' | 'paymentReminder'>('progress50');
+  const [selectedMessageTemplate, setSelectedMessageTemplate] = useState<'completed100' | 'paymentReminder'>('completed100');
   const [customMessageText, setCustomMessageText] = useState('');
 
   // Deliverables local upload states
@@ -157,11 +157,11 @@ export default function OrdersPanel({
       id: typedId,
       clientName: newClientName,
       clientPhone: newClientPhone || '+966500000000',
-      clientEmail: newClientEmail || `${typedId}@saudicore-client.com`,
-      titleArabic: newProjectTitle || (isAr ? 'طلب برمجيات سعودي كور المخصصة' : 'Saudi Core Custom Development Work'),
-      titleEnglish: newProjectTitle || 'Saudi Core Custom Development Work',
-      descriptionArabic: newProjectDesc || (isAr ? 'تفاصيل الطلب والتحليلات الخاصة بسعودي كور' : 'Scope and details of Saudi Core order'),
-      descriptionEnglish: newProjectDesc || 'Saudi Core custom system requirements',
+      clientEmail: newClientEmail || `${typedId}@madar-client.com`,
+      titleArabic: newProjectTitle || (isAr ? 'طلب برمجيات نظام مدار المخصصة' : 'Madar Custom Development Work'),
+      titleEnglish: newProjectTitle || 'Madar Custom Development Work',
+      descriptionArabic: newProjectDesc || (isAr ? 'تفاصيل الطلب والتحليلات الخاصة بنظام مدار' : 'Scope and details of Madar order'),
+      descriptionEnglish: newProjectDesc || 'Madar custom system requirements',
       date: new Date().toISOString(),
       price: finalCalculatedPrice,
       originalPrice: originalServicesSum,
@@ -275,11 +275,9 @@ export default function OrdersPanel({
 
   // Synchronize WhatsApp template text
   const populateWhatsAppPreviewText = (order: Order, templateType: typeof selectedMessageTemplate) => {
-    const prgText = `مرحباً ${order.clientName}! نود إبلاغك بأنه تم إنجاز ٥٠٪ من طلبك رقم (${order.id}) لمشروع (${order.titleArabic}) بنجاح. نحن نعمل بجد للتسليم بأبهى حلة. شكراً لثقتك بسعودي كور ✨`;
-    const cmpText = `عملينا المميز ${order.clientName}! نود تهنئتك بإكمال طلبك رقم (${order.id}) لمشروع (${order.titleArabic}) بنسبة ١٠٠٪ تماماً! نسعد بخدمتك دائماً ونراك في مشاريع قادمة ✨`;
+    const cmpText = `عملينا المميز ${order.clientName}! نود تهنئتك بإكمال طلبك رقم (${order.id}) لمشروع (${order.titleArabic}) بالكامل وجهوزيته للتسليم! نسعد بخدمتك دائماً ونراك في مشاريع قادمة ✨`;
     const payText = `مرحباً ${order.clientName}، نود تذكيرك بلطف لاستكمال دفعة طلبك رقم (${order.id}) لمشروع (${order.titleArabic}) لمتابعة التجهيز والتسليم بشكل نهائي. شكراً لتفهمك وتجاوبك ✨`;
 
-    if (templateType === 'progress50') return prgText;
     if (templateType === 'completed100') return cmpText;
     return payText;
   };
@@ -287,8 +285,8 @@ export default function OrdersPanel({
   // Toggle messaging options pane
   const handleOpenMessaging = (order: Order) => {
     setActiveMessagingOrderId(order.id);
-    setSelectedMessageTemplate('progress50');
-    setCustomMessageText(populateWhatsAppPreviewText(order, 'progress50'));
+    setSelectedMessageTemplate('completed100');
+    setCustomMessageText(populateWhatsAppPreviewText(order, 'completed100'));
   };
 
   const handleTemplateChange = (order: Order, type: typeof selectedMessageTemplate) => {
@@ -323,7 +321,15 @@ export default function OrdersPanel({
             id="new-order-create-btn"
             onClick={() => {
               setSelectedServices([]);
-              setNewOrderIdInput(`SC-${Math.floor(100 + Math.random() * 900)}`);
+              const orNumbers = orders
+                .map(o => {
+                  const match = o.id.match(/^OR-0*(\d+)$/i);
+                  return match ? parseInt(match[1], 10) : 0;
+                })
+                .filter(n => n > 0);
+              const nextNum = orNumbers.length > 0 ? Math.max(...orNumbers) + 1 : 1;
+              const formattedId = `OR-${String(nextNum).padStart(4, '0')}`;
+              setNewOrderIdInput(formattedId);
               setNewClientName('');
               setNewClientPhone('');
               setNewClientEmail('');
@@ -356,8 +362,8 @@ export default function OrdersPanel({
       {tab === 'search' && (
         <div className="flex flex-col items-center justify-center py-12 px-4 max-w-xl mx-auto space-y-6" id="centralized-search-depart">
           <div className="text-center space-y-1">
-            <h2 className="text-xl font-serif font-bold text-sage-800 dark:text-sage-350">
-              {isAr ? 'البحث عن طلبات ومشاريع' : 'Saudi Core Central Search'}
+            <h2 className="text-xl font-serif font-bold text-slate-800 dark:text-slate-300">
+              {isAr ? 'البحث عن طلبات ومشاريع' : 'Madar Central Search'}
             </h2>
             <p className="text-xs text-slate-500">
               {isAr 
@@ -372,7 +378,7 @@ export default function OrdersPanel({
               type="text"
               value={localSearchQuery}
               onChange={(e) => setLocalSearchQuery(e.target.value)}
-              placeholder={isAr ? 'مثال: SC-405 أو اسم العميل...' : 'e.g. SC-102 or client name...'}
+              placeholder={isAr ? 'البحث...' : 'Search...'}
               className={`w-full p-4 ${isAr ? 'pr-12 pl-4' : 'pl-12 pr-4'} text-sm font-semibold rounded-2xl border outline-none shadow-md transition-all duration-300
                 ${theme === 'dark' 
                   ? 'bg-sage-900/60 border-sage-850 text-white focus:border-sage-600 focus:bg-sage-900/40' 
@@ -439,8 +445,19 @@ export default function OrdersPanel({
                       }`}>
                         {order.paymentStatus === 'paid' ? (isAr ? 'تم سداد الدفعة' : 'Paid') : (isAr ? 'بانتظار السداد' : 'Pending')}
                       </span>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md bg-sage-500/10 text-sage-600`}>
-                        {order.progress}% {isAr ? 'إنجاز' : 'Done'}
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
+                        order.orderStatus === 'completed' 
+                          ? 'bg-emerald-500/10 text-emerald-600'
+                          : order.orderStatus === 'processing'
+                            ? 'bg-blue-500/10 text-blue-500'
+                            : order.orderStatus === 'cancelled'
+                              ? 'bg-rose-500/10 text-rose-500'
+                              : 'bg-zinc-500/10 text-zinc-500'
+                      }`}>
+                        {order.orderStatus === 'completed' ? (isAr ? 'مكتمل' : 'Completed') :
+                         order.orderStatus === 'processing' ? (isAr ? 'قيد التنفيذ' : 'Processing') :
+                         order.orderStatus === 'cancelled' ? (isAr ? 'ملغي' : 'Cancelled') :
+                         (isAr ? 'طلب جديد' : 'New')}
                       </span>
                     </div>
 
@@ -517,50 +534,8 @@ export default function OrdersPanel({
                           )}
                         </div>
 
-                        {/* Order Controllers (slider, payments, invoice) */}
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6" id={`order-actions-grid-${order.id}`}>
-                          
-                          {/* Col 1: Progress Tracker slider */}
-                          <div className={`p-4 rounded-xl border space-y-4 ${
-                            theme === 'dark' ? 'bg-sage-950/30 border-sage-850' : 'bg-white border-cream-200'
-                          }`}>
-                            <div className="flex items-center justify-between border-b pb-1.5 border-cream-150 dark:border-sage-900">
-                              <h5 className="font-bold text-slate-700 dark:text-slate-400 flex items-center gap-1.5 text-xs">
-                                <Activity className="w-4 h-4 text-sage-600" />
-                                <span>{isAr ? 'رصد نسبة تقدم العمل' : 'Project Completion Progress'}</span>
-                              </h5>
-                              <span className="text-xs font-bold text-sage-600 font-mono">{order.progress}%</span>
-                            </div>
-
-                            <div className="space-y-4 pt-1">
-                              <input
-                                type="range"
-                                min="0"
-                                max="100"
-                                step="10"
-                                value={order.progress}
-                                onChange={(e) => handleProgressChange(order, parseInt(e.target.value))}
-                                className="w-full accent-sage-600 cursor-pointer h-1.5 rounded-lg bg-cream-200 dark:bg-sage-900"
-                              />
-
-                              <div className="grid grid-cols-4 gap-1.5 pt-1">
-                                {[25, 50, 75, 100].map(pct => (
-                                  <button
-                                    id={`shortcut-pct-${order.id}-${pct}`}
-                                    key={pct}
-                                    onClick={() => handleProgressChange(order, pct)}
-                                    className={`py-1 text-[10px] font-mono font-extrabold rounded-md border text-center transition-colors cursor-pointer ${
-                                      order.progress === pct
-                                        ? 'bg-sage-600 border-sage-600 text-white'
-                                        : 'hover:bg-slate-100 dark:hover:bg-slate-900 border-cream-205 dark:border-sage-850 text-slate-400'
-                                    }`}
-                                  >
-                                    {pct}%
-                                  </button>
-                                ))}
-                              </div>
-                            </div>
-                          </div>
+                        {/* Order Controllers (payments, invoice) */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6" id={`order-actions-grid-${order.id}`}>
 
                           {/* Col 2: Administrative adjustments */}
                           <div className={`p-4 rounded-xl border space-y-4 ${
@@ -616,11 +591,11 @@ export default function OrdersPanel({
                             <div>
                               <h5 className="font-bold text-slate-700 dark:text-slate-400 flex items-center gap-1.5 text-xs border-b pb-1.5 border-cream-150 dark:border-sage-900">
                                 <FileText className="w-4 h-4 text-sage-600" />
-                                <span>{isAr ? 'الفاتورة المالية والخيارات' : 'Official Project Invoice'}</span>
+                                <span>{isAr ? 'فاتورة الطلب والخيارات' : 'Official Project Invoice'}</span>
                               </h5>
                               <p className="text-[10px] text-slate-400 leading-relaxed mt-2.5">
                                 {isAr 
-                                  ? 'عرض الفاتورة المالية المعتمدة للطلب وتفاصيل الدفعات والخصومات المطبقة لتسليم العمل.'
+                                  ? 'عرض فاتورة الطلب المعتمدة وتفاصيل الدفعات والخصومات المطبقة لتسليم العمل.'
                                   : 'View the authorized project billing invoice, applied discounts and transaction details.'}
                               </p>
                             </div>
@@ -715,7 +690,7 @@ export default function OrdersPanel({
                                   required
                                   value={attachName}
                                   onChange={(e) => setAttachName(e.target.value)}
-                                  placeholder={isAr ? 'شعار فيجما مفرغ، رابط قيادة سلة...' : 'e.g. Salla CSS Layout script'}
+                                  placeholder=""
                                   className={`w-full p-2 text-xs rounded-lg border outline-none ${
                                     theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-white border-cream-200 text-cream-900'
                                   }`}
@@ -727,7 +702,7 @@ export default function OrdersPanel({
                                   type="url"
                                   value={attachUrl}
                                   onChange={(e) => setAttachUrl(e.target.value)}
-                                  placeholder="https://drive.google.com/..."
+                                  placeholder=""
                                   className={`w-full p-2 text-xs rounded-lg border outline-none ${
                                     theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-white border-cream-200 text-cream-900'
                                   }`}
@@ -787,20 +762,7 @@ export default function OrdersPanel({
                             >
                               <div className="space-y-2">
                                 <label className="text-xs text-slate-400 block font-bold">{isAr ? 'اختر قالب الإشعار الجاهز لتجهيز الرسالة:' : 'Choose pre-defined formatted template:'}</label>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                                  <button
-                                    id={`tpl-progress-${order.id}`}
-                                    type="button"
-                                    onClick={() => handleTemplateChange(order, 'progress50')}
-                                    className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
-                                      selectedMessageTemplate === 'progress50'
-                                        ? 'bg-sage-600 border-sage-600 text-white'
-                                        : 'hover:bg-slate-100 dark:hover:bg-slate-900 border-cream-205 dark:border-sage-850 text-slate-400'
-                                    }`}
-                                  >
-                                    <div className="text-xs font-bold">{isAr ? 'إشعار إنجاز ٥٠٪' : '50% Progress Alert'}</div>
-                                  </button>
-
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                   <button
                                     id={`tpl-completed-${order.id}`}
                                     type="button"
@@ -811,7 +773,7 @@ export default function OrdersPanel({
                                         : 'hover:bg-slate-100 dark:hover:bg-slate-900 border-cream-205 dark:border-sage-850 text-slate-400'
                                     }`}
                                   >
-                                    <div className="text-xs font-bold">{isAr ? 'إشعار بإكمال الطلب' : '100% Completion Alert'}</div>
+                                    <div className="text-xs font-bold">{isAr ? 'إشعار بإكمال الطلب' : 'Completion Alert'}</div>
                                   </button>
 
                                   <button
@@ -901,8 +863,8 @@ export default function OrdersPanel({
                     <Plus className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-serif font-black text-sm text-sage-800 dark:text-sage-300">
-                      {isAr ? 'نموذج إنشاء طلب جديد (سعودي كور)' : 'Saudi Core New Project Registration'}
+                    <h3 className="font-serif font-black text-sm text-slate-800 dark:text-slate-300">
+                      {isAr ? 'نموذج إنشاء طلب جديد (مدار)' : 'Madar New Project Registration'}
                     </h3>
                     <p className="text-[10px] text-slate-400 mt-0.5">
                       {isAr ? 'سجل مشاريع العملاء، حدد الخصومات، والأسعار تلقائياً بناءً على قائمة الخدمات الحصرية المضمّنة' : 'Configure metadata characteristics & apply custom percentage deductions'}
@@ -925,7 +887,7 @@ export default function OrdersPanel({
                 {/* 1. Project identity / identification */}
                 <div className="space-y-3.5">
                   <span className="text-[10px] font-bold text-sage-600 uppercase tracking-widest block border-b pb-1 border-dotted border-cream-205 dark:border-sage-900">
-                    {isAr ? 'بيانات ومعرف الطلب المالي' : 'Order Identification Details'}
+                    {isAr ? 'بيانات ومعرف الطلب' : 'Order Identification Details'}
                   </span>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -936,7 +898,7 @@ export default function OrdersPanel({
                         required
                         value={newOrderIdInput}
                         onChange={(e) => setNewOrderIdInput(e.target.value)}
-                        placeholder="e.g. SC-104"
+                        placeholder=""
                         className={`w-full p-2.5 text-xs rounded-xl border outline-none font-bold font-mono focus:border-sage-600 transition-colors ${
                           theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-cream-100 border-cream-200 text-cream-900'
                         }`}
@@ -950,7 +912,7 @@ export default function OrdersPanel({
                         required
                         value={newClientName}
                         onChange={(e) => setNewClientName(e.target.value)}
-                        placeholder={isAr ? 'عبدالله القحطاني' : 'Abdullah Al-Qahtani'}
+                        placeholder=""
                         className={`w-full p-2.5 text-xs rounded-xl border outline-none focus:border-sage-600 transition-colors ${
                           theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-cream-100 border-cream-200 text-cream-900'
                         }`}
@@ -963,7 +925,7 @@ export default function OrdersPanel({
                         type="tel"
                         value={newClientPhone}
                         onChange={(e) => setNewClientPhone(e.target.value)}
-                        placeholder="+9665XXXXXXXX"
+                        placeholder=""
                         className={`w-full p-2.5 text-xs rounded-xl border outline-none font-mono focus:border-sage-600 transition-colors ${
                           theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-cream-100 border-cream-200 text-cream-900'
                         }`}
@@ -977,7 +939,7 @@ export default function OrdersPanel({
                       type="email"
                       value={newClientEmail}
                       onChange={(e) => setNewClientEmail(e.target.value)}
-                      placeholder="client@saudicore.com"
+                      placeholder=""
                       className={`w-full p-2.5 text-xs rounded-xl border outline-none focus:border-sage-600 transition-colors ${
                         theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-cream-100 border-cream-200 text-cream-900'
                       }`}
@@ -1032,7 +994,7 @@ export default function OrdersPanel({
                         type="text"
                         value={newProjectTitle}
                         onChange={(e) => setNewProjectTitle(e.target.value)}
-                        placeholder={isAr ? 'باقة موقع متكامل + كروت الشركات...' : 'Project service title'}
+                        placeholder=""
                         className={`w-full p-2.5 text-xs rounded-xl border outline-none focus:border-sage-600 transition-colors ${
                           theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-cream-100 border-cream-200 text-cream-900'
                         }`}
@@ -1045,7 +1007,7 @@ export default function OrdersPanel({
                         rows={2}
                         value={newProjectDesc}
                         onChange={(e) => setNewProjectDesc(e.target.value)}
-                        placeholder="..."
+                        placeholder=""
                         className={`w-full p-2.5 text-xs rounded-xl border outline-none resize-none focus:border-sage-600 transition-colors ${
                           theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-cream-100 border-cream-200 text-cream-900'
                         }`}

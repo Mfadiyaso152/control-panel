@@ -31,12 +31,12 @@ export default function FinancePanel({
       {/* Saudi Core Theme styled Profit Center banner */}
       <div className="text-center md:text-right py-4" id="finance-headline">
         <h2 className="text-xl font-serif font-bold tracking-tight text-sage-800 dark:text-sage-350">
-          {isAr ? 'التقارير المالية والتحليلات' : 'Financial Reports & Earnings'}
+          {isAr ? 'تقارير الأرباح والتحليلات' : 'Earnings Reports & Analytics'}
         </h2>
         <p className="text-xs text-slate-500 mt-1">
           {isAr 
-            ? 'مراقبة أرباح وإيرادات سعودي كور المباشرة بناءً على الطلبات المستلمة' 
-            : 'Operational monitoring of Saudi Core platform incomes and general margins'}
+            ? 'مراقبة أرباح وإيرادات مدار المباشرة بناءً على الطلبات المستلمة' 
+            : 'Operational monitoring of Madar platform incomes and general margins'}
         </p>
       </div>
 
@@ -74,7 +74,7 @@ export default function FinancePanel({
 
           <div className="flex items-center gap-2 mt-6 pt-6 border-t border-cream-200 dark:border-sage-850 text-xs text-slate-400">
             <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0 select-none" />
-            <span>{isAr ? 'نظام المحاسبة متوافق مع معايير الأمان المالي والمحاسبة الذكية بسعودي كور.' : 'Security-compliant smart operational ledger interface.'}</span>
+            <span>{isAr ? 'نظام الأرباح متوافق مع معايير الأمان والتحليلات لمدار.' : 'Security-compliant smart operational ledger interface.'}</span>
           </div>
         </div>
 

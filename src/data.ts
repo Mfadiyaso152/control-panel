@@ -12,8 +12,8 @@ export const DEFAULT_SPLITS: ProfitSplits = {
 
 export const DICTIONARY = {
   ar: {
-    title: "سعودي كور",
-    subtitle: "لوحة التحكم الذكية للطلبات والمالية والمشاريع",
+    title: "مدار",
+    subtitle: "لوحة التحكم الذكية للطلبات والأرباح والمشاريع",
     searchPlaceholder: "ابحث برقم الطلب أو اسم العميل، مشروع...",
     searchButton: "بحث",
     themeLabel: "المظهر",
@@ -22,7 +22,7 @@ export const DICTIONARY = {
     languageLabel: "اللغة",
     settingsTitle: "الإعدادات والخيارات",
     allOrdersTab: "إدارة الطلبات",
-    financeTab: "المالية والأرباح",
+    financeTab: "الأرباح",
     newOrderPlaceholder: "طلب جديد",
     progress: "نسبة التقدم",
     paymentStatus: "حالة الدفع",
@@ -88,8 +88,8 @@ export const DICTIONARY = {
     notificationContent: "نص الرسالة التي أرسلت تلقائياً للعميل:"
   },
   en: {
-    title: "Saudi Core",
-    subtitle: "Smart Management Portal for Orders & Accounting",
+    title: "Madar",
+    subtitle: "Smart Management Portal for Orders & Earnings",
     searchPlaceholder: "Search by order number, client name, project...",
     searchButton: "Search",
     themeLabel: "Appearance",
@@ -98,7 +98,7 @@ export const DICTIONARY = {
     languageLabel: "Language",
     settingsTitle: "Configuration & Services",
     allOrdersTab: "Orders Desk",
-    financeTab: "Earning & Ledger",
+    financeTab: "Earnings",
     newOrderPlaceholder: "New Request",
     progress: "Project Progress",
     paymentStatus: "Payment",

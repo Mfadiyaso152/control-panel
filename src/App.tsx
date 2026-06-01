@@ -13,14 +13,14 @@ import EInvoiceModal from './components/EInvoiceModal';
 import LoginScreen from './components/LoginScreen';
 import {
   testConnection,
-  fetchCloudOrders,
   saveCloudOrder,
   deleteCloudOrder,
-  fetchCloudRevenues,
   saveCloudRevenue,
   deleteCloudRevenue,
-  fetchCloudSplits,
-  saveCloudSplits
+  saveCloudSplits,
+  subscribeCloudOrders,
+  subscribeCloudRevenues,
+  subscribeCloudSplits
 } from './firebase';
 
 export default function App() {
@@ -86,30 +86,43 @@ export default function App() {
     localStorage.setItem('saudicore_lang_v2', language);
   }, [language]);
 
-  // Firebase Startup Cloud Sync Effect
+  // Firebase Runtime Real-time Cloud Sync Effect
   useEffect(() => {
+    let unsubscribeOrders = () => {};
+    let unsubscribeRevenues = () => {};
+    let unsubscribeSplits = () => {};
+
     async function initCloudSync() {
       const isOnline = await testConnection();
       if (isOnline) {
-        console.log("[Saudi Core] Initiated cloud sync with Firebase.");
-        const cloudOrders = await fetchCloudOrders();
-        if (cloudOrders && cloudOrders.length > 0) {
-          setOrders(cloudOrders);
-        }
-        const cloudRevenues = await fetchCloudRevenues();
-        if (cloudRevenues && cloudRevenues.length > 0) {
-          setExternalRevenues(cloudRevenues);
-        }
-        const cloudSplits = await fetchCloudSplits();
-        if (cloudSplits) {
-          setProfitSplits(cloudSplits);
-        }
+        console.log("[Madar Engine] Listening for real-time changes in Firestore...");
+        unsubscribeOrders = subscribeCloudOrders((cloudOrders) => {
+          if (cloudOrders) {
+            setOrders(cloudOrders);
+          }
+        });
+        unsubscribeRevenues = subscribeCloudRevenues((cloudRevenues) => {
+          if (cloudRevenues) {
+            setExternalRevenues(cloudRevenues);
+          }
+        });
+        unsubscribeSplits = subscribeCloudSplits((cloudSplits) => {
+          if (cloudSplits) {
+            setProfitSplits(cloudSplits);
+          }
+        });
       }
     }
-    // Only fetch cloud database if user is authenticated
+
     if (isAuthenticated) {
       initCloudSync();
     }
+
+    return () => {
+      unsubscribeOrders();
+      unsubscribeRevenues();
+      unsubscribeSplits();
+    };
   }, [isAuthenticated]);
 
   // Handle order update
@@ -184,19 +197,19 @@ export default function App() {
       />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 space-y-8" id="primary-shell">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 pb-32 space-y-8" id="primary-shell">
         
         {/* Absolute High-End Premium Header with Subtle Particle Ring */}
         <header className="relative flex flex-col sm:flex-row items-center justify-between gap-6 pb-6 border-b border-cream-200 dark:border-sage-900" id="smart-header">
           {/* Brand Identity / Titles */}
           <div className="space-y-1.5" id="brand-info">
             <div className="flex items-center gap-3">
-              <div className="relative w-11 h-11 bg-sage-600 rounded-2xl flex items-center justify-center text-white font-serif font-black text-2xl shadow-lg shadow-sage-600/25">
-                <span>س</span>
+              <div className="relative w-11 h-11 bg-emerald-600 rounded-2xl flex items-center justify-center text-white font-serif font-black text-2xl shadow-lg shadow-emerald-650/25">
+                <span>م</span>
               </div>
               <div className="leading-tight">
-                <h1 className="text-xl md:text-2xl font-serif font-bold text-sage-700 dark:text-sage-350 tracking-tight">
-                  {language === 'ar' ? 'سعودي كود (وحدة التحكم)' : 'Saudi Code (Control Unit)'}
+                <h1 className="text-xl md:text-2xl font-serif font-bold text-slate-800 dark:text-white tracking-tight">
+                  {language === 'ar' ? 'نظام مدار للتحكم' : 'Madar Control System'}
                 </h1>
               </div>
             </div>
@@ -236,7 +249,7 @@ export default function App() {
                 }`}
             >
               <Search className="w-4 h-4 text-sage-600" />
-              <span>{language === 'ar' ? 'البحث بالوسط' : 'Centralized Search'}</span>
+              <span>{language === 'ar' ? 'البحث' : 'Search'}</span>
             </button>
 
             {/* Tab 2: Finance */}
@@ -252,7 +265,7 @@ export default function App() {
                 }`}
             >
               <DollarSign className="w-4 h-4 text-sage-600" />
-              <span>{language === 'ar' ? 'المالية (الأرباح)' : 'Finance (Profits Only)'}</span>
+              <span>{language === 'ar' ? 'الأرباح' : 'Earnings'}</span>
             </button>
 
             {/* Tab 3: Active Orders */}
@@ -328,13 +341,13 @@ export default function App() {
 
       {/* Primary Platform Footer */}
       <footer className="py-8 mt-12 border-t border-cream-200 dark:border-sage-900 text-center space-y-1.5" id="applet-footer">
-        <p className="text-xs text-cream-800/60 dark:text-sage-400">
+        <p className="text-xs text-slate-400">
           {language === 'ar' 
-            ? 'سعودي كور للخدمات الرقمية وحلول البرمجيات المتطورة © ٢٠٢٦' 
-            : 'Saudi Core Advanced Services & Software Platform © 2026. All rights reserved.'}
+            ? 'نظام مدار للتحكم وإدارة الخدمات الرقمية © ٢٠٢٦' 
+            : 'Madar Control & Digital Services Platform © 2026. All rights reserved.'}
         </p>
-        <span className="text-[10px] text-cream-800/40 dark:text-sage-500 block font-mono">
-          Saudi Core Operations Portal • Riyadh, Saudi Arabia
+        <span className="text-[10px] text-slate-400/50 block font-mono">
+          Madar Operations Portal • Riyadh, Saudi Arabia
         </span>
       </footer>
 

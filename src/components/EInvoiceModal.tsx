@@ -88,16 +88,16 @@ export default function EInvoiceModal({ order, language, onClose, autoPrint = fa
           <div className="flex flex-col sm:flex-row justify-between items-start gap-2 border-b border-slate-100 pb-2">
             <div className="space-y-0.5">
               <div className="flex items-center gap-1">
-                <div className="w-6 h-6 bg-sage-600 rounded-md flex items-center justify-center text-white font-bold text-xs shadow-md shadow-sage-600/15 select-none text-center">
-                  س
+                <div className="w-6 h-6 bg-emerald-600 rounded-md flex items-center justify-center text-white font-bold text-xs shadow-md shadow-emerald-600/15 select-none text-center">
+                  م
                 </div>
                 <div className="leading-none">
-                  <h1 className="text-xs font-serif font-black tracking-tight text-slate-900">SAUDI CORE</h1>
-                  <span className="text-[7px] uppercase tracking-wider text-sage-600 font-bold block leading-none">Creative Software Studio</span>
+                  <h1 className="text-xs font-serif font-black tracking-tight text-slate-900">MADAR</h1>
+                  <span className="text-[7px] uppercase tracking-wider text-emerald-600 font-bold block leading-none">Creative Software Studio</span>
                 </div>
               </div>
               <p className="text-[8px] text-slate-400 font-sans leading-tight">
-                Saudi Core Advanced Software Platforms.<br />
+                Madar Advanced Software Platforms.<br />
                 Kingdom of Saudi Arabia, Riyadh City.
               </p>
             </div>
@@ -123,13 +123,13 @@ export default function EInvoiceModal({ order, language, onClose, autoPrint = fa
           {/* Client & Contractor Details - Tight Margins */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-cream-100/60 p-2.5 rounded-xl border border-cream-200">
             <div>
-              <span className="text-[8px] font-bold uppercase tracking-wider text-sage-600 block mb-0.5 font-sans flex items-center gap-0.5 leading-none">
-                <Building2 className="w-2.5 h-2.5 text-sage-500" /> Seller / Issuer
+              <span className="text-[8px] font-bold uppercase tracking-wider text-emerald-600 block mb-0.5 font-sans flex items-center gap-0.5 leading-none">
+                <Building2 className="w-2.5 h-2.5 text-emerald-500" /> Seller / Issuer
               </span>
-              <h4 className="font-bold text-slate-800 text-[9px]">Saudi Core Operations Agency</h4>
+              <h4 className="font-bold text-slate-800 text-[9px]">Madar Operations Agency</h4>
               <p className="text-[8px] text-slate-400 leading-tight mt-0.5">
                 Riyadh Governorate, King Fahd Rd<br />
-                operations@saudicore.sa
+                operations@madar.sa
               </p>
             </div>
             <div>
@@ -211,10 +211,10 @@ export default function EInvoiceModal({ order, language, onClose, autoPrint = fa
                   <rect x="55" y="80" width="14" height="6" fill="currentColor" />
                   <rect x="75" y="75" width="6" height="12" fill="currentColor" />
                 </svg>
-                <span className="absolute inset-0 m-auto w-2.5 h-2.5 bg-sage-600 rounded-xs flex items-center justify-center text-[4px] font-black text-white font-serif">S</span>
+                <span className="absolute inset-0 m-auto w-2.5 h-2.5 bg-emerald-600 rounded-xs flex items-center justify-center text-[4px] font-black text-white font-serif">M</span>
               </div>
               <div className="space-y-0.5 leading-snug">
-                <span className="text-[7px] uppercase font-bold text-sage-600 block">{language === 'ar' ? 'هوية العقد الإلكتروني' : 'Contract Integrity'}</span>
+                <span className="text-[7px] uppercase font-bold text-emerald-600 block">{language === 'ar' ? 'هوية العقد الإلكتروني' : 'Contract Integrity'}</span>
                 <p className="text-[8px] text-slate-400 max-w-[130px] leading-tight">
                   {language === 'ar' 
                     ? 'رمز استجابة للتحقق.'
@@ -246,7 +246,7 @@ export default function EInvoiceModal({ order, language, onClose, autoPrint = fa
 
           {/* Footer of invoice - compact */}
           <div className="border-t border-slate-100 pt-2 text-center text-[8px] text-slate-400 font-sans space-y-0.5 leading-tight">
-            <p className="font-bold text-slate-500">Thank you for partnering with Saudi Core Development Platform.</p>
+            <p className="font-bold text-slate-500">Thank you for partnering with Madar Development Platform.</p>
           </div>
 
           {/* Explicit Exit Action Block at the bottom - Hidden on Print */}

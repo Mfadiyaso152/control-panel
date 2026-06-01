@@ -8,7 +8,8 @@ import {
   deleteDoc, 
   collection, 
   getDocs, 
-  getDocFromServer
+  getDocFromServer,
+  onSnapshot
 } from 'firebase/firestore';
 import { Order, ExternalRevenue, ProfitSplits } from './types';
 
@@ -35,9 +36,9 @@ try {
   dbInstance = getFirestore(appInstance);
   authInstance = getAuth(appInstance);
   isFirebaseAvailable = true;
-  console.log("Saudi Core: Firebase initialized successfully with cloud endpoints.");
+  console.log("Madar: Firebase initialized successfully with cloud endpoints.");
 } catch (error) {
-  console.warn("Saudi Core: Firebase failed to initialize. Falling back to robust offline state.", error);
+  console.warn("Madar: Firebase failed to initialize. Falling back to robust offline state.", error);
 }
 
 export const db = dbInstance!;
@@ -77,7 +78,7 @@ function handleFirestoreError(error: unknown, operationType: OperationType, path
     operationType,
     path
   };
-  console.error('[Saudi Core] Firestore Security and Access Error:', JSON.stringify(errInfo));
+  console.error('[Madar] Firestore Security and Access Error:', JSON.stringify(errInfo));
 }
 
 // Validate connection on startup (Phase testing)
@@ -87,12 +88,13 @@ export async function testConnection() {
     await getDocFromServer(doc(db, 'test', 'connection'));
     return true;
   } catch (error) {
-    if (error instanceof Error && error.message.includes('the client is offline')) {
-      console.warn("Saudi Core Firestore status: System is operating offline.");
-    } else {
-      handleFirestoreError(error, OperationType.GET, 'test/connection');
+    const errMsg = error instanceof Error ? error.message : String(error);
+    if (errMsg.includes('the client is offline') || errMsg.includes('Failed to get document because the client is offline')) {
+      console.warn("Madar Firestore status: System is operating offline.");
+      return false;
     }
-    return false;
+    // Any other response (like "Missing or insufficient permissions") means the network is online and we contacted Google Firebase!
+    return true;
   }
 }
 
@@ -193,5 +195,62 @@ export async function saveCloudSplits(splits: ProfitSplits): Promise<boolean> {
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, 'splits/config');
     return false;
+  }
+}
+
+// Real-time synchronization subscriptions
+export function subscribeCloudOrders(onUpdate: (orders: Order[]) => void): () => void {
+  if (!isFirebaseAvailable) return () => {};
+  try {
+    return onSnapshot(collection(db, 'orders'), (snapshot) => {
+      const ordersList: Order[] = [];
+      snapshot.forEach((docSnap) => {
+        ordersList.push(docSnap.data() as Order);
+      });
+      // Sort: Newest orders first by parsing the date string
+      ordersList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      onUpdate(ordersList);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, 'orders');
+    });
+  } catch (error) {
+    handleFirestoreError(error, OperationType.LIST, 'orders');
+    return () => {};
+  }
+}
+
+export function subscribeCloudRevenues(onUpdate: (revenues: ExternalRevenue[]) => void): () => void {
+  if (!isFirebaseAvailable) return () => {};
+  try {
+    return onSnapshot(collection(db, 'revenues'), (snapshot) => {
+      const revsList: ExternalRevenue[] = [];
+      snapshot.forEach((docSnap) => {
+        revsList.push(docSnap.data() as ExternalRevenue);
+      });
+      // Sort by date descending
+      revsList.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      onUpdate(revsList);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, 'revenues');
+    });
+  } catch (error) {
+    handleFirestoreError(error, OperationType.LIST, 'revenues');
+    return () => {};
+  }
+}
+
+export function subscribeCloudSplits(onUpdate: (splits: ProfitSplits) => void): () => void {
+  if (!isFirebaseAvailable) return () => {};
+  try {
+    return onSnapshot(doc(db, 'splits', 'config'), (docSnap) => {
+      if (docSnap.exists()) {
+        onUpdate(docSnap.data() as ProfitSplits);
+      }
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, 'splits/config');
+    });
+  } catch (error) {
+    handleFirestoreError(error, OperationType.GET, 'splits/config');
+    return () => {};
   }
 }

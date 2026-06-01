@@ -6,24 +6,25 @@
   --font-serif: "Playfair Display", "Cairo", Georgia, Georgia, serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   
-  --color-sage-50: #f6f7f3;
-  --color-sage-100: #eef1e6;
-  --color-sage-200: #dae1cb;
-  --color-sage-300: #bdca9f;
-  --color-sage-450: #9cb16b;
-  --color-sage-600: #8a9a5b;
-  --color-sage-700: #6a7943;
-  --color-sage-800: #546034;
-  --color-sage-900: #454f2c;
-  --color-sage-950: #242916;
+  --color-sage-50: #f8fafc;
+  --color-sage-100: #f1f5f9;
+  --color-sage-200: #e2e8f0;
+  --color-sage-300: #cbd5e1;
+  --color-sage-450: #10b981;
+  --color-sage-600: #059669;
+  --color-sage-700: #047857;
+  --color-sage-800: #064e3b;
+  --color-sage-900: #0f172a;
+  --color-sage-955: #020617;
+  --color-sage-950: #090d16;
   
-  --color-cream-50: #fbfbfa;
-  --color-cream-100: #f9f8f6;
-  --color-cream-150: #f4f2ee;
-  --color-cream-200: #e5e1da;
-  --color-cream-300: #c9c5bc;
-  --color-cream-800: #4a4947;
-  --color-cream-950: #201f1e;
+  --color-cream-50: #ffffff;
+  --color-cream-100: #f8fafc;
+  --color-cream-150: #f1f5f9;
+  --color-cream-200: #cbd5e1;
+  --color-cream-300: #94a3b8;
+  --color-cream-800: #1e293b;
+  --color-cream-950: #020617;
 }
 
 /* Custom gorgeous UI scrollbar rules */
@@ -37,12 +38,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #8a9a5b40;
+  background: #05966940;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #8a9a5b80;
+  background: #05966980;
 }
 
 /* Base resets & Arabic first enhancements */

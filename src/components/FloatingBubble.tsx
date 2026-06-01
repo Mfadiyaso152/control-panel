@@ -62,8 +62,8 @@ export default function FloatingBubble({
         )}
       </AnimatePresence>
 
-      {/* Floating Bubble Control - Top Left */}
-      <div className={`fixed ${language === 'ar' ? 'left-6' : 'left-6'} top-6 z-50`} id="floating-bubble-container">
+      {/* Floating Bubble Control - Bottom Right */}
+      <div className="fixed right-6 bottom-6 z-50" id="floating-bubble-container">
         <motion.button
           id="bubble-toggle-btn"
           variants={bubbleVariants}
@@ -111,12 +111,12 @@ export default function FloatingBubble({
             {/* Sidebar Header */}
             <div className={`p-6 border-b flex items-center justify-between ${theme === 'dark' ? 'border-sage-900' : 'border-cream-150'}`} id="sidebar-header">
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${theme === 'dark' ? 'bg-sage-900 text-sage-300' : 'bg-[#F4F2EE] text-[#8A9A5B] font-serif font-bold text-xl'}`}>
-                  <span>S</span>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${theme === 'dark' ? 'bg-emerald-950 text-emerald-300' : 'bg-[#E6F4EA] text-emerald-700 font-serif font-bold text-xl'}`}>
+                  <span>M</span>
                 </div>
                 <div>
-                  <h3 className="font-serif font-bold text-lg text-sage-700 dark:text-sage-300 tracking-tight">{t.settingsTitle}</h3>
-                  <p className="text-[10px] uppercase font-bold text-cream-800/40 dark:text-sage-500">Saudi Core v2.1.0</p>
+                  <h3 className="font-serif font-bold text-lg text-slate-700 dark:text-slate-350 tracking-tight">{t.settingsTitle}</h3>
+                  <p className="text-[10px] uppercase font-bold text-slate-400">Madar Platform v2.2.0</p>
                 </div>
               </div>
               <button 
@@ -177,7 +177,7 @@ export default function FloatingBubble({
                   `}
                 >
                   <DollarSign className="w-5 h-5 text-sage-600" />
-                  <span>{language === 'ar' ? 'قسم المالية والارباح' : 'Finance & Earnings'}</span>
+                  <span>{language === 'ar' ? 'قسم الأرباح' : 'Earnings Department'}</span>
                 </button>
 
                 {/* 3. Active Orders Tab */}
@@ -305,9 +305,9 @@ export default function FloatingBubble({
             </div>
 
             {/* Sidebar Footer */}
-            <div className={`p-6 border-t text-center ${theme === 'dark' ? 'border-sage-900' : 'border-cream-150'}`} id="sidebar-footer">
+            <div className={`p-6 border-t text-center ${theme === 'dark' ? 'border-zinc-800' : 'border-slate-100'}`} id="sidebar-footer">
               <span className="text-[10px] opacity-40 uppercase tracking-widest font-mono">
-                {language === 'ar' ? 'تمت البرمجة لـ سعودي كور ✨' : 'Engineered for Saudi Core ✨'}
+                {language === 'ar' ? 'تمت البرمجة لـ منصة مدار ✨' : 'Engineered for Madar ✨'}
               </span>
             </div>
           </motion.div>
