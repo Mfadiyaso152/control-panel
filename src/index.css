@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Cairo", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", "Cairo", Georgia, Georgia, serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-sage-50: #f6f7f3;
+  --color-sage-100: #eef1e6;
+  --color-sage-200: #dae1cb;
+  --color-sage-300: #bdca9f;
+  --color-sage-450: #9cb16b;
+  --color-sage-600: #8a9a5b;
+  --color-sage-700: #6a7943;
+  --color-sage-800: #546034;
+  --color-sage-900: #454f2c;
+  --color-sage-950: #242916;
+  
+  --color-cream-50: #fbfbfa;
+  --color-cream-100: #f9f8f6;
+  --color-cream-150: #f4f2ee;
+  --color-cream-200: #e5e1da;
+  --color-cream-300: #c9c5bc;
+  --color-cream-800: #4a4947;
+  --color-cream-950: #201f1e;
+}
+
+/* Custom gorgeous UI scrollbar rules */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #8a9a5b40;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8a9a5b80;
+}
+
+/* Base resets & Arabic first enhancements */
+html, body {
+  font-family: "Cairo", "Inter", sans-serif;
+}
+
+@layer utilities {
+  .rtl {
+    direction: rtl;
+  }
+  .ltr {
+    direction: ltr;
+  }
+  .font-arabic {
+    font-family: "Cairo", sans-serif;
+  }
+}
+
+/* Seamless support for responsive native print layouts */
+@media print {
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+  #primary-shell, #applet-footer, #floating-bubble-container, #overlay-bg, #invoice-controls {
+    display: none !important;
+  }
+  #invoice-modal-content {
+    box-shadow: none !important;
+    border: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  #invoice-print-area {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "entities": {
+    "Order": {
+      "title": "Order",
+      "description": "Saudi Core Service Orders and Project milestones shape.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "clientName": { "type": "string" },
+        "clientPhone": { "type": "string" },
+        "clientEmail": { "type": "string" },
+        "titleArabic": { "type": "string" },
+        "titleEnglish": { "type": "string" },
+        "descriptionArabic": { "type": "string" },
+        "descriptionEnglish": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "price": { "type": "number" },
+        "progress": { "type": "number" },
+        "paymentStatus": { "type": "string" },
+        "invoiceStatus": { "type": "string" },
+        "orderStatus": { "type": "string" },
+        "discount": { "type": "number" },
+        "originalPrice": { "type": "number" }
+      },
+      "required": ["id", "clientName", "clientPhone", "clientEmail", "titleArabic", "price", "progress", "paymentStatus", "orderStatus"]
+    },
+    "ExternalRevenue": {
+      "title": "ExternalRevenue",
+      "description": "Ancillary out-of-catalog revenues.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "amount": { "type": "number" },
+        "descriptionArabic": { "type": "string" },
+        "descriptionEnglish": { "type": "string" },
+        "date": { "type": "string", "format": "date-time" },
+        "categoryArabic": { "type": "string" },
+        "categoryEnglish": { "type": "string" }
+      },
+      "required": ["id", "amount", "descriptionArabic", "date", "categoryArabic"]
+    },
+    "ProfitSplits": {
+      "title": "ProfitSplits",
+      "description": "Treasury and split percentages allocation structure.",
+      "type": "object",
+      "properties": {
+        "operationalPercent": { "type": "number" },
+        "partnersPercent": { "type": "number" },
+        "savingsPercent": { "type": "number" }
+      },
+      "required": ["operationalPercent", "partnersPercent", "savingsPercent"]
+    }
+  },
+  "firestore": {
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Milestones and orders registered with the client portal."
+    },
+    "/revenues/{revenueId}": {
+      "schema": "ExternalRevenue",
+      "description": "Ancillary operational revenues tracker."
+    },
+    "/splits/config": {
+      "schema": "ProfitSplits",
+      "description": "Platform global profit divider."
+    }
+  }
+}

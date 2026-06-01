@@ -1,0 +1,6 @@
+{
+  "name": "Saudi Core Control Panel",
+  "description": "لوحة تحكم سعودي كور لإدارة طلبات العملاء، ومتابعة تقدم مشاريع البرمجيات والتصميم، والمالية المتقدمة، وإصدار فواتير ضريبية إلكترونية متوافقة مع هيئة الزكاة والضريبة والجمارك.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
