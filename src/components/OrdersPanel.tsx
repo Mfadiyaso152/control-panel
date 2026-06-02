@@ -4,7 +4,7 @@ import {
   Search, Sliders, Clock, Check, 
   Link as LinkIcon, FileCheck, Plus, 
   Send, Phone, Mail, FileText, Trash2, Activity, ShieldCheck, HelpCircle, Eye,
-  User, Hash, MessageSquare, AlertCircle, CheckCircle2, X, ChevronDown, Download
+  User, Hash, MessageSquare, AlertCircle, CheckCircle2, X, ChevronDown, Download, Orbit
 } from 'lucide-react';
 import { Order, Attachment, Language, Theme, ServiceItem } from '../types';
 import { DICTIONARY } from '../data';
@@ -82,10 +82,13 @@ export default function OrdersPanel({
   const [newClientEmail, setNewClientEmail] = useState('');
   const [newProjectTitle, setNewProjectTitle] = useState('');
   const [newProjectDesc, setNewProjectDesc] = useState('');
-  const [selectedServices, setSelectedServices] = useState<typeof SAUDICORE_SERVICES>([]);
+  const [customServices, setCustomServices] = useState<{ id: string; name: string; price: number }[]>([
+    { id: '1', name: '', price: 0 }
+  ]);
   const [discountPercent, setDiscountPercent] = useState<number>(0);
   const [newPaymentStatus, setNewPaymentStatus] = useState<'paid' | 'pending' | 'refunded'>('pending');
   const [newOrderStatus, setNewOrderStatus] = useState<'new' | 'processing' | 'completed' | 'cancelled'>('new');
+  const [isPendingPreset, setIsPendingPreset] = useState(false);
   const [deletingOrderId, setDeletingOrderId] = useState<string | null>(null);
 
   // Format phone number to clean digits for WhatsApp links
@@ -101,32 +104,22 @@ export default function OrdersPanel({
     return digits.startsWith('966') ? digits : '966' + digits;
   };
 
-  // Automated price calculations for Checked services in Creation form
+  // Automated price calculations for custom services
   const originalServicesSum = useMemo(() => {
-    return selectedServices.reduce((sum, item) => sum + item.price, 0);
-  }, [selectedServices]);
+    return customServices.reduce((sum, item) => sum + (Number(item.price) || 0), 0);
+  }, [customServices]);
 
-  // Adjust pre-filled states when standard service is checked/toggled
-  const handleToggleService = (srv: typeof SAUDICORE_SERVICES[0]) => {
-    const exists = selectedServices.find(s => s.id === srv.id);
-    if (exists) {
-      setSelectedServices(prev => prev.filter(s => s.id !== srv.id));
-    } else {
-      setSelectedServices(prev => [...prev, srv]);
-    }
-  };
-
-  // Pre-populate project title and description from checked services
+  // Pre-populate project title and description from custom services
   useEffect(() => {
-    if (selectedServices.length > 0) {
-      const titlesAr = selectedServices.map(s => s.titleArabic).join(' + ');
-      const titlesEn = selectedServices.map(s => s.titleEnglish).join(' + ');
-      setNewProjectTitle(isAr ? titlesAr : titlesEn);
+    const valid = customServices.filter(s => s.name.trim() !== '');
+    if (valid.length > 0) {
+      const titles = valid.map(s => s.name).join(' + ');
+      setNewProjectTitle(titles);
       
-      const descsAr = selectedServices.map(s => s.titleArabic + ` (${s.price} ريال)`).join(' - ');
-      setNewProjectDesc(isAr ? `تتضمن خدمات: ${descsAr}` : `Includes: ${titlesEn}`);
+      const descs = valid.map(s => s.name + ` (${s.price} ريال)`).join(' - ');
+      setNewProjectDesc(isAr ? `تتضمن خدمات: ${descs}` : `Includes: ${titles}`);
     }
-  }, [selectedServices, isAr]);
+  }, [customServices, isAr]);
 
   const finalCalculatedPrice = useMemo(() => {
     const discountMultiplier = (100 - discountPercent) / 100;
@@ -171,13 +164,13 @@ export default function OrdersPanel({
       invoiceStatus: newPaymentStatus === 'paid' ? 'generated' : 'draft',
       orderStatus: newOrderStatus,
       attachments: [],
-      services: selectedServices.map(s => ({
-        id: s.id,
-        titleArabic: s.titleArabic,
-        titleEnglish: s.titleEnglish,
-        descriptionArabic: s.titleArabic,
-        descriptionEnglish: s.titleEnglish,
-        price: s.price
+      services: customServices.filter(s => s.name.trim() !== '').map((s, index) => ({
+        id: 'cust-srv-' + s.id,
+        titleArabic: s.name,
+        titleEnglish: s.name,
+        descriptionArabic: s.name,
+        descriptionEnglish: s.name,
+        price: Number(s.price) || 0
       }))
     };
 
@@ -190,7 +183,6 @@ export default function OrdersPanel({
     setNewClientEmail('');
     setNewProjectTitle('');
     setNewProjectDesc('');
-    setSelectedServices([]);
     setDiscountPercent(0);
     setNewPaymentStatus('pending');
     setNewOrderStatus('new');
@@ -306,52 +298,91 @@ export default function OrdersPanel({
       
       {/* 1. Header/Toolbar context depending on selected Tab */}
       {tab === 'active_orders' && (
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 py-3" id="active-panel-heading">
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 py-3" id="active-panel-heading">
           <div>
-            <h2 className="text-lg font-serif font-bold text-sage-800 dark:text-sage-300">
+            <h2 className="text-lg font-serif font-bold text-sage-800 flex items-center gap-2">
+              <Orbit className="w-5.5 h-5.5 text-purple-600 animate-spin" style={{ animationDuration: '8s' }} />
               {isAr ? 'إدارة الطلبات الجارية والمشاريع' : 'Active Client Orders Desk'}
             </h2>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-slate-800 font-bold mt-0.5">
               {isAr 
                 ? 'متابعة مراحل التنفيذ، الدفعات، ورفع تسليمات العملاء للطلبات الجارية حالياً' 
                 : 'Follow current deliverables status, update progress values, index invoices and print PDFs'}
             </p>
           </div>
-          <button
-            id="new-order-create-btn"
-            onClick={() => {
-              setSelectedServices([]);
-              const orNumbers = orders
-                .map(o => {
-                  const match = o.id.match(/^OR-0*(\d+)$/i);
-                  return match ? parseInt(match[1], 10) : 0;
-                })
-                .filter(n => n > 0);
-              const nextNum = orNumbers.length > 0 ? Math.max(...orNumbers) + 1 : 1;
-              const formattedId = `OR-${String(nextNum).padStart(4, '0')}`;
-              setNewOrderIdInput(formattedId);
-              setNewClientName('');
-              setNewClientPhone('');
-              setNewClientEmail('');
-              setNewProjectTitle('');
-              setNewProjectDesc('');
-              setDiscountPercent(0);
-              setIsCreateOpen(true);
-            }}
-            className="flex items-center gap-1.5 px-6 py-3 bg-sage-600 hover:bg-sage-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-sage-600/15 cursor-pointer transform hover:scale-[1.01]"
-          >
-            <Plus className="w-4 h-4" />
-            <span>{isAr ? 'إنشاء طلب جديد' : 'Register New Order'}</span>
-          </button>
+          <div className="flex flex-wrap gap-2.5 items-center">
+            {/* Button 1: Create General Order */}
+            <button
+              id="new-order-create-btn"
+              onClick={() => {
+                setIsPendingPreset(false);
+                const orNumbers = orders
+                  .map(o => {
+                    const match = o.id.match(/^OR-0*(\d+)$/i);
+                    return match ? parseInt(match[1], 10) : 0;
+                  })
+                  .filter(n => n > 0);
+                const nextNum = orNumbers.length > 0 ? Math.max(...orNumbers) + 1 : 1;
+                const formattedId = `OR-${String(nextNum).padStart(4, '0')}`;
+                setNewOrderIdInput(formattedId);
+                setNewClientName('');
+                setNewClientPhone('');
+                setNewClientEmail('');
+                setNewProjectTitle('');
+                setNewProjectDesc('');
+                setCustomServices([{ id: '1', name: '', price: 0 }]);
+                setDiscountPercent(0);
+                setNewPaymentStatus('pending');
+                setNewOrderStatus('new');
+                setIsPendingPreset(false);
+                setIsCreateOpen(true);
+              }}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-purple-600/15 cursor-pointer transform hover:scale-[1.01]"
+            >
+              <Plus className="w-4 h-4" />
+              <span>{isAr ? 'إنشاء طلب جديد' : 'Register New Order'}</span>
+            </button>
+
+            {/* Button 2: Create Explicit Pending Order */}
+            <button
+              id="pending-order-create-btn"
+              onClick={() => {
+                setIsPendingPreset(true);
+                const orNumbers = orders
+                  .map(o => {
+                    const match = o.id.match(/^OR-0*(\d+)$/i);
+                    return match ? parseInt(match[1], 10) : 0;
+                  })
+                  .filter(n => n > 0);
+                const nextNum = orNumbers.length > 0 ? Math.max(...orNumbers) + 1 : 1;
+                const formattedId = `OR-${String(nextNum).padStart(4, '0')}`;
+                setNewOrderIdInput(formattedId);
+                setNewClientName('');
+                setNewClientPhone('');
+                setNewClientEmail('');
+                setNewProjectTitle('');
+                setNewProjectDesc('');
+                setCustomServices([{ id: '1', name: '', price: 0 }]);
+                setDiscountPercent(0);
+                setNewPaymentStatus('pending');
+                setNewOrderStatus('new');
+                setIsCreateOpen(true);
+              }}
+              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-amber-500/15 cursor-pointer transform hover:scale-[1.01]"
+            >
+              <Clock className="w-4 h-4" />
+              <span>{isAr ? 'إنشاء طلب معلق' : 'Create Pending Order'}</span>
+            </button>
+          </div>
         </div>
       )}
 
       {tab === 'completed_orders' && (
         <div className="py-3 border-b border-cream-150 dark:border-sage-900" id="completed-panel-heading">
-          <h2 className="text-lg font-serif font-bold text-emerald-600">
+          <h2 className="text-lg font-serif font-bold text-purple-600">
             {isAr ? 'سجل الطلبات المكتملة المنتهية' : 'Completed Projects Registry (100%)'}
           </h2>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-xs text-slate-800 font-bold mt-0.5">
             {isAr 
               ? 'الأرشيف المعتمد لكافة المشاريع التي تم تسليمها للعملاء وإنجازها بالكامل' 
               : 'Indexed database of successfully finalized applications and visually perfect drafts'}
@@ -362,10 +393,10 @@ export default function OrdersPanel({
       {tab === 'search' && (
         <div className="flex flex-col items-center justify-center py-12 px-4 max-w-xl mx-auto space-y-6" id="centralized-search-depart">
           <div className="text-center space-y-1">
-            <h2 className="text-xl font-serif font-bold text-slate-800 dark:text-slate-300">
+            <h2 className="text-xl font-serif font-bold text-slate-850 dark:text-slate-300">
               {isAr ? 'البحث عن طلبات ومشاريع' : 'Madar Central Search'}
             </h2>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-800 font-bold">
               {isAr 
                 ? 'أدخل رقم الطلب أو اسم مشروع العميل في الخانة بالأسفل للمطابقة السريعة' 
                 : 'Lookup unified client profile database by entering order ID or project names'}
@@ -373,7 +404,7 @@ export default function OrdersPanel({
           </div>
 
           <div className="w-full relative" id="centered-search-box">
-            <Search className={`absolute inset-y-0 ${isAr ? 'right-4' : 'left-4'} m-auto w-5 h-5 text-slate-400`} />
+            <Search className={`absolute inset-y-0 ${isAr ? 'right-4' : 'left-4'} m-auto w-5 h-5 text-slate-800`} />
             <input
               type="text"
               value={localSearchQuery}
@@ -394,13 +425,13 @@ export default function OrdersPanel({
         <div className={`p-10 rounded-2xl border text-center space-y-3 ${
           theme === 'dark' ? 'bg-sage-900/10 border-sage-900/30' : 'bg-white border-cream-200'
         }`} id="orders-empty-state">
-          <AlertCircle className="w-10 h-10 text-slate-300 dark:text-slate-700 mx-auto animate-bounce" />
-          <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wi">
+          <AlertCircle className="w-10 h-10 text-purple-600 mx-auto animate-bounce" />
+          <h3 className="text-xs font-black text-slate-900 uppercase tracking-wi">
             {tab === 'search' 
               ? (localSearchQuery ? (isAr ? 'لم يتم العثور على أي نتائج مطابقة للبحث' : 'No records match search') : (isAr ? 'الرجاء إدخال كلمات البحث بالجهة العلوية لعرض النتائج' : 'Please provide search keywords to find items'))
               : (isAr ? 'لا توجد طلبات مسجلة في هذا القسم حالياً' : 'No orders found inside this ledger')}
           </h3>
-          <p className="text-[11px] text-slate-400 max-w-sm mx-auto leading-relaxed">
+          <p className="text-[11px] text-slate-800 font-bold max-w-sm mx-auto leading-relaxed">
             {tab === 'active_orders' && (isAr ? 'يمكنك الضغط على زر "إنشاء طلب جديد" لتسجيل معاملة عميل وتحديد خدماته.' : 'Get started by creating a client metadata request.')}
           </p>
         </div>
@@ -433,26 +464,26 @@ export default function OrdersPanel({
                   {/* Left: ID & Title & client */}
                   <div className="space-y-1 leading-normal flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-[10px] font-mono font-bold bg-sage-100 dark:bg-sage-900 px-2.5 py-0.5 rounded-full text-sage-700 dark:text-sage-350 tracking-wider">
+                      <span className="text-[10px] font-mono font-extrabold bg-purple-100 dark:bg-purple-950 px-2.5 py-0.5 rounded-full text-purple-900 dark:text-purple-300 tracking-wider">
                         #{order.id}
                       </span>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
+                      <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md ${
                         order.paymentStatus === 'paid' 
-                          ? 'bg-emerald-500/10 text-emerald-600' 
+                          ? 'bg-purple-600/10 text-purple-700' 
                           : order.paymentStatus === 'pending'
-                            ? 'bg-amber-500/10 text-amber-500'
-                            : 'bg-slate-300/30 text-slate-500'
+                            ? 'bg-amber-500/15 text-amber-900 font-black'
+                            : 'bg-slate-200 text-slate-900 font-extrabold'
                       }`}>
                         {order.paymentStatus === 'paid' ? (isAr ? 'تم سداد الدفعة' : 'Paid') : (isAr ? 'بانتظار السداد' : 'Pending')}
                       </span>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
+                      <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md ${
                         order.orderStatus === 'completed' 
-                          ? 'bg-emerald-500/10 text-emerald-600'
+                          ? 'bg-purple-600/10 text-purple-700'
                           : order.orderStatus === 'processing'
-                            ? 'bg-blue-500/10 text-blue-500'
+                            ? 'bg-blue-600/10 text-blue-800'
                             : order.orderStatus === 'cancelled'
-                              ? 'bg-rose-500/10 text-rose-500'
-                              : 'bg-zinc-500/10 text-zinc-500'
+                              ? 'bg-rose-500/15 text-rose-900 font-black'
+                              : 'bg-zinc-200 text-zinc-900 font-extrabold'
                       }`}>
                         {order.orderStatus === 'completed' ? (isAr ? 'مكتمل' : 'Completed') :
                          order.orderStatus === 'processing' ? (isAr ? 'قيد التنفيذ' : 'Processing') :
@@ -461,30 +492,30 @@ export default function OrdersPanel({
                       </span>
                     </div>
 
-                    <h3 className="font-serif font-black text-sm text-slate-800 dark:text-white pt-1">
+                    <h3 className="font-serif font-black text-sm text-slate-900 dark:text-white pt-1">
                       {isAr ? order.titleArabic : order.titleEnglish}
                     </h3>
 
-                    <div className="flex items-center gap-2.5 text-xs text-slate-400 pt-0.5">
+                    <div className="flex items-center gap-2.5 text-xs text-slate-800 font-bold pt-0.5 animate-fadeIn">
                       <span className="flex items-center gap-1">
-                        <User className="w-3.5 h-3.5 text-slate-400" />
+                        <User className="w-3.5 h-3.5 text-slate-800" />
                         <strong>{order.clientName}</strong>
                       </span>
                       <span>•</span>
-                      <span>{new Date(order.date).toLocaleDateString(isAr ? 'ar-SA' : 'en-US')}</span>
+                      <span className="text-slate-800 font-bold">{new Date(order.date).toLocaleDateString(isAr ? 'ar-SA' : 'en-US')}</span>
                     </div>
                   </div>
 
                   {/* Right: Net Price & Expansion chevron */}
                   <div className="flex items-center gap-4 self-end md:self-center">
                     <div className="text-right leading-tight">
-                      <span className="text-[10px] text-slate-400 block uppercase tracking-wider">{isAr ? 'تكلفة الطلب الصافية' : 'Net due billing'}</span>
-                      <strong className="text-base font-bold text-sage-700 dark:text-sage-350">
+                      <span className="text-[10px] text-slate-805 font-black block uppercase tracking-wider">{isAr ? 'تكلفة الطلب الصافية' : 'Net due billing'}</span>
+                      <strong className="text-base font-black text-slate-900 dark:text-sage-350">
                         {order.price.toLocaleString()} {isAr ? 'ريال' : 'SAR'}
                       </strong>
                     </div>
 
-                    <div className={`p-2 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-850 text-slate-400 transition-transform ${
+                    <div className={`p-2 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-350 dark:border-slate-850 text-slate-800 transition-transform ${
                       isExpanded ? 'rotate-180' : ''
                     }`}>
                       <ChevronDown className="w-4 h-4" />
@@ -528,7 +559,7 @@ export default function OrdersPanel({
                               ))}
                             </div>
                           ) : (
-                            <p className="text-xs text-slate-400 italic">
+                            <p className="text-xs text-slate-805 font-bold italic">
                               {isAr ? order.descriptionArabic : order.descriptionEnglish}
                             </p>
                           )}
@@ -539,23 +570,23 @@ export default function OrdersPanel({
 
                           {/* Col 2: Administrative adjustments */}
                           <div className={`p-4 rounded-xl border space-y-4 ${
-                            theme === 'dark' ? 'bg-sage-950/30 border-sage-850' : 'bg-white border-cream-200'
+                            theme === 'dark' ? 'bg-sage-950/30 border-sage-850' : 'bg-white border-cream-205'
                           }`}>
-                            <h5 className="font-bold text-slate-700 dark:text-slate-400 flex items-center gap-1.5 text-xs border-b pb-1.5 border-cream-150 dark:border-sage-900">
-                              <Sliders className="w-4 h-4 text-sage-600" />
+                            <h5 className="font-extrabold text-slate-900 dark:text-slate-200 flex items-center gap-1.5 text-xs border-b pb-1.5 border-cream-200 dark:border-sage-900">
+                              <Sliders className="w-4 h-4 text-purple-650" />
                               <span>{isAr ? 'تعديل الحالة والدفع' : 'Administrative Matrix'}</span>
                             </h5>
 
                             <div className="grid grid-cols-1 gap-3 text-xs">
                               {/* Payment status selector */}
                               <div className="space-y-1">
-                                <label className="text-[10px] text-slate-400 block">{isAr ? 'حالة سداد الفاتورة:' : 'Payment billing status:'}</label>
+                                <label className="text-[10px] text-slate-805 font-black block">{isAr ? 'حالة سداد الفاتورة:' : 'Payment billing status:'}</label>
                                 <select
                                   id={`payment-status-select-${order.id}`}
                                   value={order.paymentStatus}
                                   onChange={(e) => handlePaymentStatusChange(order, e.target.value as any)}
-                                  className={`w-full p-1.5 text-xs rounded-lg border outline-none ${
-                                    theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-white border-cream-200 text-cream-800'
+                                  className={`w-full p-2 text-xs font-bold rounded-lg border outline-none ${
+                                    theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-white border-cream-220 text-cream-950'
                                   }`}
                                 >
                                   <option value="pending">{isAr ? 'معلق (Pending)' : 'Pending'}</option>
@@ -566,13 +597,13 @@ export default function OrdersPanel({
 
                               {/* Order process status selector */}
                               <div className="space-y-1">
-                                <label className="text-[10px] text-slate-400 block">{isAr ? 'حالة الطلب الإدارية:' : 'Order technical lifecycle:'}</label>
+                                <label className="text-[10px] text-slate-805 font-black block">{isAr ? 'حالة الطلب الإدارية:' : 'Order technical lifecycle:'}</label>
                                 <select
                                   id={`order-status-select-${order.id}`}
                                   value={order.orderStatus}
                                   onChange={(e) => handleOrderStatusChange(order, e.target.value as any)}
-                                  className={`w-full p-1.5 text-xs rounded-lg border outline-none ${
-                                    theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-white border-cream-200 text-cream-800'
+                                  className={`w-full p-2 text-xs font-bold rounded-lg border outline-none ${
+                                    theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-white border-cream-220 text-cream-950'
                                   }`}
                                 >
                                   <option value="new">{isAr ? 'طلب جديد (New)' : 'New'}</option>
@@ -586,14 +617,14 @@ export default function OrdersPanel({
 
                           {/* Col 3: Government E-Invoice & print PDF view */}
                           <div className={`p-4 rounded-xl border flex flex-col justify-between space-y-4 ${
-                            theme === 'dark' ? 'bg-sage-950/30 border-sage-850' : 'bg-white border-cream-200'
+                            theme === 'dark' ? 'bg-sage-950/30 border-sage-850' : 'bg-white border-cream-205'
                           }`}>
                             <div>
-                              <h5 className="font-bold text-slate-700 dark:text-slate-400 flex items-center gap-1.5 text-xs border-b pb-1.5 border-cream-150 dark:border-sage-900">
-                                <FileText className="w-4 h-4 text-sage-600" />
+                              <h5 className="font-extrabold text-slate-900 dark:text-slate-205 flex items-center gap-1.5 text-xs border-b pb-1.5 border-cream-200 dark:border-sage-900">
+                                <FileText className="w-4 h-4 text-purple-650" />
                                 <span>{isAr ? 'فاتورة الطلب والخيارات' : 'Official Project Invoice'}</span>
                               </h5>
-                              <p className="text-[10px] text-slate-400 leading-relaxed mt-2.5">
+                              <p className="text-[10px] text-slate-805 font-bold leading-relaxed mt-2.5">
                                 {isAr 
                                   ? 'عرض فاتورة الطلب المعتمدة وتفاصيل الدفعات والخصومات المطبقة لتسليم العمل.'
                                   : 'View the authorized project billing invoice, applied discounts and transaction details.'}
@@ -604,7 +635,7 @@ export default function OrdersPanel({
                               <button
                                 id={`view-invoice-btn-${order.id}`}
                                 onClick={() => onViewInvoice(order)}
-                                className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-sage-600 hover:bg-sage-700 text-white font-bold rounded-lg transition-colors cursor-pointer"
+                                className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition-colors cursor-pointer"
                               >
                                 <Eye className="w-4 h-4" />
                                 <span>{isAr ? 'عرض الفاتورة' : 'View invoice'}</span>
@@ -631,121 +662,17 @@ export default function OrdersPanel({
 
                         </div>
 
-                        {/* Deliverables upload / attachments section (الملفات والروابط والملخصات) */}
-                        <div className="space-y-4" id={`order-attachments-section-${order.id}`}>
-                          <div className="flex justify-between items-center border-b pb-1.5 border-cream-150 dark:border-sage-900">
-                            <h5 className="font-bold text-slate-700 dark:text-slate-400 flex items-center gap-1.5 text-xs">
-                              <FileCheck className="w-4.5 h-4.5 text-sage-600" />
-                              <span>{isAr ? 'قسم الملفات الي اشتغلت فيها و الروابط الي انجزتها' : 'Delivered Visual Files & Completed Production Links'}</span>
-                            </h5>
-                            <span className="text-[11px] font-mono bg-sage-600/10 text-sage-600 px-2 rounded-full font-bold">
-                              {order.attachments?.length || 0}
-                            </span>
-                          </div>
-
-                          {order.attachments && order.attachments.length > 0 ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                              {order.attachments.map(att => (
-                                <div key={att.id} className={`p-3 rounded-xl border flex justify-between items-center ${
-                                  theme === 'dark' ? 'bg-sage-950 border-sage-900' : 'bg-white border-cream-200'
-                                }`}>
-                                  <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-sage-500/10 text-sage-650 rounded-lg shrink-0">
-                                      {att.type === 'file' ? <FileText className="w-4 h-4" /> : <LinkIcon className="w-4 h-4" />}
-                                    </div>
-                                    <div className="min-w-0">
-                                      <a href={att.url} target="_blank" rel="noopener noreferrer" className="text-xs font-bold text-slate-700 dark:text-slate-350 hover:underline block truncate hover:text-sage-600">
-                                        {att.name}
-                                      </a>
-                                      <span className="text-[9px] text-slate-400 block font-mono">
-                                        {att.type === 'file' ? (isAr ? 'ملف مرفوع' : 'Uploaded File') : (isAr ? 'رابط تسليم خارجي' : 'External Deliveries Link')}
-                                      </span>
-                                    </div>
-                                  </div>
-                                  <button
-                                    id={`remove-att-${order.id}-${att.id}`}
-                                    onClick={() => handleDeleteAttachment(order, att.id)}
-                                    className="p-1 text-slate-400 hover:text-rose-500 rounded hover:bg-rose-500/5 cursor-pointer"
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </button>
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            <p className="text-xs text-slate-400 italic">
-                              {isAr ? 'لا توجد أي روابط أو ملفات تسليمات مسجلة حالياً لهذا المشروع.' : 'No uploads visual artifacts indexed yet.'}
-                            </p>
-                          )}
-
-                          {/* Quick upload attachments and link form */}
-                          <form onSubmit={(e) => handleLoadAttachmentSubmit(order, e)} className={`p-4 rounded-xl border border-dashed text-xs space-y-3 ${
-                            theme === 'dark' ? 'bg-slate-900/40 border-sage-850' : 'bg-slate-50 border-cream-220'
-                          }`}>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                              <div className="space-y-1">
-                                <label className="text-[10px] text-slate-400 block">{isAr ? 'اسم الملف أو رابط الإنجاز:' : 'Asset Identifier:'} *</label>
-                                <input
-                                  type="text"
-                                  required
-                                  value={attachName}
-                                  onChange={(e) => setAttachName(e.target.value)}
-                                  placeholder=""
-                                  className={`w-full p-2 text-xs rounded-lg border outline-none ${
-                                    theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-white border-cream-200 text-cream-900'
-                                  }`}
-                                />
-                              </div>
-                              <div className="space-y-1">
-                                <label className="text-[10px] text-slate-400 block">{isAr ? 'عنوان URL المباشر:' : 'Target Hyperlink URL:'}</label>
-                                <input
-                                  type="url"
-                                  value={attachUrl}
-                                  onChange={(e) => setAttachUrl(e.target.value)}
-                                  placeholder=""
-                                  className={`w-full p-2 text-xs rounded-lg border outline-none ${
-                                    theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-white border-cream-200 text-cream-900'
-                                  }`}
-                                />
-                              </div>
-                              <div className="space-y-1">
-                                <label className="text-[10px] text-slate-400 block">{isAr ? 'نوع المرفق:' : 'Resource Category:'}</label>
-                                <div className="flex gap-2">
-                                  <select
-                                    value={attachType}
-                                    onChange={(e) => setAttachType(e.target.value as 'file' | 'link')}
-                                    className={`flex-1 p-2 text-xs rounded-lg border outline-none ${
-                                      theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-white border-cream-200 text-cream-800'
-                                    }`}
-                                  >
-                                    <option value="file">{isAr ? 'ملف (File)' : 'File'}</option>
-                                    <option value="link">{isAr ? 'رابط (Link)' : 'Link'}</option>
-                                  </select>
-                                  <button
-                                    id={`submit-attach-${order.id}`}
-                                    type="submit"
-                                    disabled={isUploading}
-                                    className="px-4 py-2 bg-sage-600 hover:bg-sage-700 disabled:bg-slate-300 text-white font-bold rounded-lg transition-colors cursor-pointer"
-                                  >
-                                    {isUploading ? '...' : (isAr ? 'إدراج' : 'Add')}
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
-                          </form>
-                        </div>
-
                         {/* Customer Direct WhatsApp messaging triggers */}
                         <div className="space-y-4" id={`client-whatsapp-out-${order.id}`}>
-                          <div className="border-b pb-1.5 border-cream-150 dark:border-sage-900 flex justify-between items-center">
-                            <h5 className="font-bold text-slate-700 dark:text-slate-400 flex items-center gap-1.5 text-xs">
-                              <MessageSquare className="w-4.5 h-4.5 text-sage-600" />
+                          <div className="border-b pb-1.5 border-cream-200 dark:border-sage-900 flex justify-between items-center">
+                            <h5 className="font-extrabold text-slate-900 dark:text-slate-200 flex items-center gap-1.5 text-xs">
+                              <MessageSquare className="w-4.5 h-4.5 text-purple-600" />
                               <span>{isAr ? 'إرسال تحديثات وإشعارات للعميل (واتساب مباشر)' : 'Broadcast Live WhatsApp Progress Dispatch'}</span>
                             </h5>
                             <button
                               id={`open-messaging-${order.id}`}
                               onClick={() => handleOpenMessaging(order)}
-                              className="text-xs font-bold text-sage-600 hover:underline flex items-center gap-1 cursor-pointer"
+                              className="text-xs font-black text-purple-600 hover:underline flex items-center gap-1 cursor-pointer"
                             >
                               <span>{isAr ? 'تجهيز الرسالة التلقائية' : 'Configure pre-set templates'}</span>
                             </button>
@@ -761,7 +688,7 @@ export default function OrdersPanel({
                               id={`messaging-panel-${order.id}`}
                             >
                               <div className="space-y-2">
-                                <label className="text-xs text-slate-400 block font-bold">{isAr ? 'اختر قالب الإشعار الجاهز لتجهيز الرسالة:' : 'Choose pre-defined formatted template:'}</label>
+                                <label className="text-xs text-slate-900 block font-black">{isAr ? 'اختر قالب الإشعار الجاهز لتجهيز الرسالة:' : 'Choose pre-defined formatted template:'}</label>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                   <button
                                     id={`tpl-completed-${order.id}`}
@@ -769,11 +696,11 @@ export default function OrdersPanel({
                                     onClick={() => handleTemplateChange(order, 'completed100')}
                                     className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                                       selectedMessageTemplate === 'completed100'
-                                        ? 'bg-sage-600 border-sage-600 text-white'
-                                        : 'hover:bg-slate-100 dark:hover:bg-slate-900 border-cream-205 dark:border-sage-850 text-slate-400'
+                                        ? 'bg-purple-600 border-purple-650 text-white'
+                                        : 'hover:bg-slate-100 dark:hover:bg-slate-900 border-cream-300 dark:border-sage-850 text-slate-800'
                                     }`}
                                   >
-                                    <div className="text-xs font-bold">{isAr ? 'إشعار بإكمال الطلب' : 'Completion Alert'}</div>
+                                    <div className="text-xs font-black">{isAr ? 'إشعار بإكمال الطلب' : 'Completion Alert'}</div>
                                   </button>
 
                                   <button
@@ -782,29 +709,29 @@ export default function OrdersPanel({
                                     onClick={() => handleTemplateChange(order, 'paymentReminder')}
                                     className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                                       selectedMessageTemplate === 'paymentReminder'
-                                        ? 'bg-sage-600 border-sage-600 text-white'
-                                        : 'hover:bg-slate-100 dark:hover:bg-slate-900 border-cream-205 dark:border-sage-850 text-slate-400'
+                                        ? 'bg-purple-600 border-purple-650 text-white'
+                                        : 'hover:bg-slate-100 dark:hover:bg-slate-900 border-cream-300 dark:border-sage-850 text-slate-800'
                                     }`}
                                   >
-                                    <div className="text-xs font-bold">{isAr ? 'تذكير بحالة الدفع' : 'Payment Reminder'}</div>
+                                    <div className="text-xs font-black">{isAr ? 'تذكير بحالة الدفع' : 'Payment Reminder'}</div>
                                   </button>
                                 </div>
                               </div>
 
                               <div className="space-y-1.5 text-xs">
-                                <label className="text-slate-400 block font-semibold">{isAr ? 'معاينة نص الرسالة الجاهزة (يمكنك التعديل عليه):' : 'Interactive text editor (feel free to modify text):'}</label>
+                                <label className="text-slate-900 block font-black">{isAr ? 'معاينة نص الرسالة الجاهزة (يمكنك التعديل عليه):' : 'Interactive text editor (feel free to modify text):'}</label>
                                 <textarea
                                   rows={4}
                                   value={customMessageText}
                                   onChange={(e) => setCustomMessageText(e.target.value)}
-                                  className={`w-full p-3 rounded-xl border outline-none resize-none leading-relaxed font-sans ${
-                                    theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-slate-50 border-cream-205 text-cream-800'
+                                  className={`w-full p-3 rounded-xl border outline-none resize-none leading-relaxed font-sans font-bold ${
+                                    theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-slate-100 border-cream-220 text-cream-950'
                                   }`}
                                 />
                               </div>
 
                               <div className="flex justify-between items-center gap-4 text-xs">
-                                <span className="text-[10px] text-slate-400">
+                                <span className="text-[10px] text-slate-900 font-extrabold bg-slate-100 px-2 py-1 rounded-md">
                                   {isAr ? `سيتم التوجيه لهاتف العميل: ${order.clientPhone}` : `Redirect to client WhatsApp cell: ${order.clientPhone}`}
                                 </span>
                                 <div className="flex gap-2">
@@ -812,7 +739,7 @@ export default function OrdersPanel({
                                     id={`cancel-msg-${order.id}`}
                                     type="button"
                                     onClick={() => setActiveMessagingOrderId(null)}
-                                    className="px-4 py-2 border border-cream-300 text-slate-500 rounded-lg font-bold hover:bg-slate-50 transition-colors cursor-pointer"
+                                    className="px-4 py-2 border border-cream-350 text-slate-805 rounded-lg font-black hover:bg-slate-100 transition-colors cursor-pointer"
                                   >
                                     {isAr ? 'إلغاء' : 'Cancel'}
                                   </button>
@@ -820,7 +747,7 @@ export default function OrdersPanel({
                                     id={`send-msg-btn-${order.id}`}
                                     type="button"
                                     onClick={() => handleSendWhatsAppSubmit(order)}
-                                    className="px-5 py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                                    className="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                                   >
                                     <Phone className="w-3.5 h-3.5" />
                                     <span>{isAr ? 'إرسال وتوجيه للواتساب' : 'Open WhatsApp Chat'}</span>
@@ -852,29 +779,35 @@ export default function OrdersPanel({
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               className={`p-6 md:p-8 rounded-2xl w-full max-w-2xl shadow-2xl border flex flex-col max-h-[90vh] overflow-hidden ${
-                theme === 'dark' ? 'bg-sage-950 border-sage-800 text-white' : 'bg-white border-cream-200 text-cream-900'
+                theme === 'dark' ? 'bg-sage-950 border-sage-800 text-white' : 'bg-white border-cream-205 text-cream-900'
               }`}
             >
               
               {/* Header */}
-              <div className="flex items-center justify-between border-b pb-4 border-cream-150 dark:border-sage-850 shrink-0">
+              <div className="flex items-center justify-between border-b pb-4 border-cream-200 dark:border-sage-855 shrink-0">
                 <div className="flex items-center gap-2.5">
-                  <div className="p-2 bg-sage-600/15 text-sage-600 rounded-lg">
-                    <Plus className="w-5 h-5" />
+                  <div className={`p-2 rounded-lg ${isPendingPreset ? 'bg-amber-500/15 text-amber-600' : 'bg-purple-600/15 text-purple-600'}`}>
+                    {isPendingPreset ? <Clock className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
                   </div>
                   <div>
-                    <h3 className="font-serif font-black text-sm text-slate-800 dark:text-slate-300">
-                      {isAr ? 'نموذج إنشاء طلب جديد (مدار)' : 'Madar New Project Registration'}
+                    <h3 className="font-serif font-black text-sm text-slate-900 dark:text-slate-300">
+                      {isAr 
+                        ? (isPendingPreset ? 'نموذج إنشاء طلب معلّق' : 'نموذج إنشاء طلب جديد (مدار)')
+                        : (isPendingPreset ? 'Register New Pending Order' : 'Madar New Project Registration')
+                      }
                     </h3>
-                    <p className="text-[10px] text-slate-400 mt-0.5">
-                      {isAr ? 'سجل مشاريع العملاء، حدد الخصومات، والأسعار تلقائياً بناءً على قائمة الخدمات الحصرية المضمّنة' : 'Configure metadata characteristics & apply custom percentage deductions'}
+                    <p className="text-[10px] text-slate-900 font-extrabold mt-0.5">
+                      {isAr 
+                        ? (isPendingPreset ? 'يتم حفظ الطلب فوراً كطلب معلق في النظام لانتظار تأكيد الدفعة من العميل' : 'سجل مشاريع العملاء، حدد الأسعار تلقائياً في خانات العمل حرّة')
+                        : 'Configure metadata characteristics & apply custom percentage deductions'
+                      }
                     </p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsCreateOpen(false)}
-                  className="p-1 px-2 hover:bg-slate-50 dark:hover:bg-slate-900 text-slate-400 hover:text-slate-600 font-extrabold rounded-md text-xs cursor-pointer"
+                  className="p-1 px-2 hover:bg-slate-100 dark:hover:bg-slate-900 text-slate-900 hover:text-slate-600 font-black rounded-md text-xs cursor-pointer"
                   id="close-create-modal"
                 >
                   ✕
@@ -886,103 +819,144 @@ export default function OrdersPanel({
                 
                 {/* 1. Project identity / identification */}
                 <div className="space-y-3.5">
-                  <span className="text-[10px] font-bold text-sage-600 uppercase tracking-widest block border-b pb-1 border-dotted border-cream-205 dark:border-sage-900">
+                  <span className="text-[10px] font-black text-purple-700 uppercase tracking-widest block border-b pb-1 border-dotted border-cream-220 dark:border-sage-900">
                     {isAr ? 'بيانات ومعرف الطلب' : 'Order Identification Details'}
                   </span>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-500 block">{isAr ? 'رقم الطلب:' : 'Authorized Order Number:'} *</label>
+                      <label className="text-[11px] font-black text-slate-900 block">{isAr ? 'رقم الطلب:' : 'Authorized Order Number:'} *</label>
                       <input
                         type="text"
                         required
                         value={newOrderIdInput}
                         onChange={(e) => setNewOrderIdInput(e.target.value)}
                         placeholder=""
-                        className={`w-full p-2.5 text-xs rounded-xl border outline-none font-bold font-mono focus:border-sage-600 transition-colors ${
-                          theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-cream-100 border-cream-200 text-cream-900'
+                        className={`w-full p-2.5 text-xs rounded-xl border outline-none font-bold font-mono focus:border-purple-600 transition-colors ${
+                          theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-slate-100 border-cream-220 text-cream-950'
                         }`}
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-500 block">{isAr ? 'اسم العميل بالكامل:' : 'Client Full Name:'} *</label>
+                      <label className="text-[11px] font-black text-slate-900 block">{isAr ? 'اسم العميل بالكامل:' : 'Client Full Name:'} *</label>
                       <input
                         type="text"
                         required
                         value={newClientName}
                         onChange={(e) => setNewClientName(e.target.value)}
                         placeholder=""
-                        className={`w-full p-2.5 text-xs rounded-xl border outline-none focus:border-sage-600 transition-colors ${
-                          theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-cream-100 border-cream-200 text-cream-900'
+                        className={`w-full p-2.5 text-xs rounded-xl border outline-none font-bold focus:border-purple-600 transition-colors ${
+                          theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-slate-100 border-cream-220 text-cream-950'
                         }`}
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[11px] font-bold text-slate-500 block">{isAr ? 'رقم جوال العميل:' : 'WhatsApp Mobile Number:'}</label>
+                      <label className="text-[11px] font-black text-slate-900 block">{isAr ? 'رقم جوال العميل:' : 'WhatsApp Mobile Number:'}</label>
                       <input
                         type="tel"
                         value={newClientPhone}
                         onChange={(e) => setNewClientPhone(e.target.value)}
                         placeholder=""
-                        className={`w-full p-2.5 text-xs rounded-xl border outline-none font-mono focus:border-sage-600 transition-colors ${
-                          theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-cream-100 border-cream-200 text-cream-900'
+                        className={`w-full p-2.5 text-xs rounded-xl border outline-none font-bold font-mono focus:border-purple-600 transition-colors ${
+                          theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-slate-100 border-cream-220 text-cream-950'
                         }`}
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 gap-1">
-                    <label className="text-[11px] font-bold text-slate-500 block">{isAr ? 'البريد الإلكتروني للعميل:' : 'Client Email:'}</label>
+                    <label className="text-[11px] font-black text-slate-900 block">{isAr ? 'البريد الإلكتروني للعميل:' : 'Client Email:'}</label>
                     <input
                       type="email"
                       value={newClientEmail}
                       onChange={(e) => setNewClientEmail(e.target.value)}
                       placeholder=""
-                      className={`w-full p-2.5 text-xs rounded-xl border outline-none focus:border-sage-600 transition-colors ${
-                        theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-cream-100 border-cream-200 text-cream-900'
+                      className={`w-full p-2.5 text-xs rounded-xl border outline-none font-bold focus:border-purple-650 transition-colors ${
+                        theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-slate-100 border-cream-220 text-cream-950'
                       }`}
                     />
                   </div>
                 </div>
 
-                {/* 2. Checklist of Saudi Core precise Services (المبلغ يتحدد تلقائياً) */}
+                {/* 2. Custom Services list with manageable names and prices */}
                 <div className="space-y-3.5">
-                  <span className="text-[10px] font-bold text-sage-600 uppercase tracking-widest block border-b pb-1 border-dotted border-cream-205 dark:border-sage-900">
-                    {isAr ? 'اختر باقات وخدمات المتجر المطلوبة (المبلغ يتحدد تلقائياً)' : 'Services Catalog Selector (Pricing Autosums)'}
+                  <span className="text-[11px] font-bold text-purple-600 uppercase tracking-widest block border-b pb-1 border-dotted border-cream-205 dark:border-sage-900">
+                    {isAr ? 'تحديد الخدمات والمنتجات والتحكم بالأسعار' : 'Configure Custom Services & Manage Pricing'}
                   </span>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 max-h-[160px] overflow-y-auto p-3 border border-dashed border-cream-250 dark:border-sage-900 rounded-xl bg-slate-50/50 dark:bg-sage-950/10">
-                    {SAUDICORE_SERVICES.map(srv => {
-                      const isChecked = !!selectedServices.find(s => s.id === srv.id);
-                      return (
-                        <div
-                          key={srv.id}
-                          onClick={() => handleToggleService(srv)}
-                          className={`p-2.5 rounded-xl border text-right cursor-pointer select-none transition-all duration-200 flex items-center gap-2.5 ${
-                            isChecked
-                              ? theme === 'dark'
-                                ? 'bg-sage-900/80 border-sage-500 text-white shadow shadow-sage-950'
-                                : 'bg-sage-100/50 border-sage-400 text-sage-850 font-bold'
-                              : theme === 'dark'
-                                ? 'bg-sage-950/20 border-sage-900 hover:border-sage-800 text-slate-350'
-                                : 'bg-white border-cream-200 hover:border-cream-300 text-cream-800'
-                          }`}
-                        >
-                          <span className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 transition-colors ${
-                            isChecked ? 'bg-sage-600 border-sage-600 text-white' : 'border-slate-300 bg-transparent'
-                          }`}>
-                            {isChecked && <Check className="w-3 h-3" />}
-                          </span>
-                          <div className="flex-1 min-w-0">
-                            <span className="block font-bold text-[11px] truncate">{isAr ? srv.titleArabic : srv.titleEnglish}</span>
-                            <span className="block text-[10px] text-sage-600 dark:text-sage-400 font-mono mt-0.5">{srv.price} ريال</span>
-                          </div>
+                  <div className="space-y-2.5 max-h-[220px] overflow-y-auto p-3 border border-dashed border-cream-250 dark:border-sage-900 rounded-xl bg-slate-50/50 dark:bg-sage-950/10" id="custom-services-rows">
+                    {customServices.map((srv, index) => (
+                      <div key={srv.id} className="flex gap-2 items-center" id={`srv-row-${srv.id}`}>
+                        {/* Service Item Index Badge */}
+                        <span className="w-5 h-5 rounded-md bg-purple-100 dark:bg-purple-950 text-purple-600 font-mono text-[10px] font-bold flex items-center justify-center shrink-0">
+                          {index + 1}
+                        </span>
+
+                        {/* Name Input */}
+                        <div className="flex-1 min-w-0">
+                          <input
+                            type="text"
+                            required
+                            placeholder={isAr ? 'اسم الخدمة أو المنتج...' : 'Service or product name...'}
+                            value={srv.name}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              setCustomServices(prev => prev.map(s => s.id === srv.id ? { ...s, name: value } : s));
+                            }}
+                            className={`w-full p-2 text-xs rounded-lg border outline-none font-semibold ${
+                              theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white focus:border-purple-600' : 'bg-white border-cream-200 text-cream-900 focus:border-purple-600'
+                            }`}
+                          />
                         </div>
-                      );
-                    })}
+
+                        {/* Price Input */}
+                        <div className="w-24 shrink-0">
+                          <input
+                            type="number"
+                            required
+                            min={0}
+                            placeholder={isAr ? 'السعر' : 'Price'}
+                            value={srv.price || ''}
+                            onChange={(e) => {
+                              const value = Math.max(0, parseFloat(e.target.value) || 0);
+                              setCustomServices(prev => prev.map(s => s.id === srv.id ? { ...s, price: value } : s));
+                            }}
+                            className={`w-full p-2 text-xs rounded-lg border outline-none font-bold font-mono ${
+                              theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white focus:border-purple-600' : 'bg-white border-cream-200 text-cream-900 focus:border-purple-600'
+                            }`}
+                          />
+                        </div>
+
+                        {/* Delete Service Row button */}
+                        {customServices.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCustomServices(prev => prev.filter(s => s.id !== srv.id));
+                            }}
+                            className="p-1 px-2 border border-rose-200 text-rose-500 hover:bg-rose-50 rounded-lg cursor-pointer transition-colors"
+                            title={isAr ? 'حذف هذه الخدمة' : 'Delete service'}
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                    ))}
                   </div>
+
+                  {/* Add Service Row trigger button */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCustomServices(prev => [...prev, { id: Date.now().toString() + Math.random().toString().slice(-3), name: '', price: 0 }]);
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 border border-purple-300 text-purple-600 hover:bg-purple-50 rounded-lg text-[10px] font-bold transition-colors cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>{isAr ? 'إضافة خدمة أو منتج جديد' : 'Add custom service / product'}</span>
+                  </button>
                 </div>
 
                 {/* 3. Project details preview summaries */}
@@ -1059,7 +1033,7 @@ export default function OrdersPanel({
                       </div>
                       <div className="flex justify-between border-t border-cream-220 dark:border-sage-850 pt-1.5 mt-1.5 text-xs">
                         <span className="font-bold text-slate-800 dark:text-slate-350">{isAr ? 'صافي التكلفة النهائية المحسوبة:' : 'Net final order price:'}</span>
-                        <span className="font-bold font-mono text-sage-650 text-sm tracking-tight">{finalCalculatedPrice.toLocaleString()} ريال</span>
+                        <span className="font-bold font-mono text-purple-650 dark:text-purple-400 text-sm tracking-tight">{finalCalculatedPrice.toLocaleString()} ريال</span>
                       </div>
                     </div>
 

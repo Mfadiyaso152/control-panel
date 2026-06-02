@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Settings, Sliders, Globe, Moon, Sun, Monitor, DollarSign, ListTodo, X, Search, CheckCircle } from 'lucide-react';
+import { Settings, Sliders, Globe, Moon, Sun, Monitor, DollarSign, ListTodo, X, Search, CheckCircle, Orbit } from 'lucide-react';
 import { Language, Theme } from '../types';
 import { DICTIONARY } from '../data';
 
@@ -111,11 +111,12 @@ export default function FloatingBubble({
             {/* Sidebar Header */}
             <div className={`p-6 border-b flex items-center justify-between ${theme === 'dark' ? 'border-sage-900' : 'border-cream-150'}`} id="sidebar-header">
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${theme === 'dark' ? 'bg-emerald-950 text-emerald-300' : 'bg-[#E6F4EA] text-emerald-700 font-serif font-bold text-xl'}`}>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center relative ${theme === 'dark' ? 'bg-purple-950 text-purple-300' : 'bg-[#F3E8FF] text-purple-700 font-serif font-bold text-xl'}`}>
+                  <Orbit className="absolute -top-1 -right-1 w-4 h-4 text-purple-500 animate-spin" style={{ animationDuration: '6s' }} />
                   <span>M</span>
                 </div>
                 <div>
-                  <h3 className="font-serif font-bold text-lg text-slate-700 dark:text-slate-350 tracking-tight">{t.settingsTitle}</h3>
+                  <h3 className="font-serif font-bold text-lg text-slate-700 dark:text-slate-350 tracking-tight flex items-center gap-1.5">{t.settingsTitle}</h3>
                   <p className="text-[10px] uppercase font-bold text-slate-400">Madar Platform v2.2.0</p>
                 </div>
               </div>
@@ -223,41 +224,6 @@ export default function FloatingBubble({
                   <CheckCircle className="w-4.5 h-4.5 text-sage-600" />
                   <span>{language === 'ar' ? 'الطلبات المكتملة' : 'Completed Orders Registry'}</span>
                 </button>
-              </div>
-
-              {/* Theme Settings Panel */}
-              <div className="flex flex-col gap-3">
-                <span className={`text-xs uppercase font-extrabold tracking-wider ${theme === 'dark' ? 'text-sage-400' : 'text-sage-600'}`}>
-                  {t.themeLabel}
-                </span>
-
-                <div className={`grid grid-cols-2 gap-2 p-1 rounded-xl ${theme === 'dark' ? 'bg-sage-900/80' : 'bg-cream-150'}`} id="theme-toggles">
-                  <button
-                    id="theme-light-btn"
-                    onClick={() => setTheme('light')}
-                    className={`flex items-center justify-center gap-2 py-2 rounded-lg text-sm cursor-pointer transition-all
-                      ${theme === 'light'
-                        ? 'bg-white text-sage-700 shadow-xs font-semibold'
-                        : 'text-cream-800/60 hover:text-cream-800 dark:hover:text-cream-50'
-                      }`}
-                  >
-                    <Sun className="w-4 h-4" />
-                    <span>{t.themeLight}</span>
-                  </button>
-
-                  <button
-                    id="theme-dark-btn"
-                    onClick={() => setTheme('dark')}
-                    className={`flex items-center justify-center gap-2 py-2 rounded-lg text-sm cursor-pointer transition-all
-                      ${theme === 'dark'
-                        ? 'bg-sage-800 text-sage-200 border border-sage-700/50 shadow-xs font-semibold'
-                        : 'text-cream-800/60 hover:text-cream-800 dark:hover:text-cream-50'
-                      }`}
-                  >
-                    <Moon className="w-4 h-4" />
-                    <span>{theme === 'dark' ? t.themeDark : 'Dark'}</span>
-                  </button>
-                </div>
               </div>
 
               {/* Language Settings Panel */}

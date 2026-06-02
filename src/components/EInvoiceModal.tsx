@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { motion } from 'motion/react';
-import { FileText, Printer, CheckCircle, X, Receipt, Shield, Building2, User, Download } from 'lucide-react';
+import { FileText, Printer, CheckCircle, X, Receipt, Shield, Building2, User, Download, Orbit } from 'lucide-react';
 import { Order, Language } from '../types';
 import { DICTIONARY } from '../data';
 
@@ -73,7 +73,7 @@ export default function EInvoiceModal({ order, language, onClose, autoPrint = fa
             <button
               id="close-invoice-btn"
               onClick={onClose}
-              className="p-1 transition-colors rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 flex items-center gap-0.5 text-[9px]"
+              className="p-1 transition-colors rounded-lg text-slate-800 font-bold hover:bg-slate-100 hover:text-slate-900 flex items-center gap-0.5 text-[9px]"
               title={language === 'ar' ? 'إغلاق' : 'Close'}
             >
               <span className="font-bold">{language === 'ar' ? 'إغلاق' : 'Close'}</span>
@@ -88,15 +88,19 @@ export default function EInvoiceModal({ order, language, onClose, autoPrint = fa
           <div className="flex flex-col sm:flex-row justify-between items-start gap-2 border-b border-slate-100 pb-2">
             <div className="space-y-0.5">
               <div className="flex items-center gap-1">
-                <div className="w-6 h-6 bg-emerald-600 rounded-md flex items-center justify-center text-white font-bold text-xs shadow-md shadow-emerald-600/15 select-none text-center">
+                <div className="w-6 h-6 bg-purple-600 rounded-md flex items-center justify-center text-white font-bold text-xs shadow-md shadow-purple-600/15 select-none text-center relative">
+                  <Orbit className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 text-purple-200 animate-spin" />
                   م
                 </div>
                 <div className="leading-none">
-                  <h1 className="text-xs font-serif font-black tracking-tight text-slate-900">MADAR</h1>
-                  <span className="text-[7px] uppercase tracking-wider text-emerald-600 font-bold block leading-none">Creative Software Studio</span>
+                  <h1 className="text-xs font-serif font-black tracking-tight text-slate-900 flex items-center gap-1">
+                    <Orbit className="w-3 h-3 text-purple-600 animate-spin" style={{ animationDuration: '6s' }} />
+                    MADAR
+                  </h1>
+                  <span className="text-[7px] uppercase tracking-wider text-purple-600 font-bold block leading-none">Creative Software Studio</span>
                 </div>
               </div>
-              <p className="text-[8px] text-slate-400 font-sans leading-tight">
+              <p className="text-[8px] text-slate-800 font-bold font-sans leading-tight">
                 Madar Advanced Software Platforms.<br />
                 Kingdom of Saudi Arabia, Riyadh City.
               </p>
@@ -104,18 +108,18 @@ export default function EInvoiceModal({ order, language, onClose, autoPrint = fa
 
             {/* Right side Metadata */}
             <div className="text-left sm:text-right space-y-0.5 leading-none">
-              <span className="inline-flex items-center px-1 py-0.2 rounded-full text-[7px] font-bold bg-sage-50 text-sage-700 uppercase border border-sage-100">
+              <span className="inline-flex items-center px-1 py-0.2 rounded-full text-[7px] font-bold bg-sage-50 text-sage-800 uppercase border border-sage-100">
                 Verified System Bill
               </span>
-              <h2 className="text-[10px] font-bold text-slate-400 uppercase tracking-tight block mt-0.5">{language === 'ar' ? 'فاتورة حساب مشروع' : 'PROJECT INVOICE'}</h2>
+              <h2 className="text-[10px] font-extrabold text-slate-900 uppercase tracking-tight block mt-0.5">{language === 'ar' ? 'فاتورة حساب مشروع' : 'PROJECT INVOICE'}</h2>
               <p className="text-[9px]">
-                <span className="text-slate-400">{language === 'ar' ? 'رقم الفاتورة:' : 'Invoice ID:'}</span> <strong className="font-bold text-slate-700">INV-{order.id}</strong>
+                <span className="text-slate-800 font-bold">{language === 'ar' ? 'رقم الفاتورة:' : 'Invoice ID:'}</span> <strong className="font-bold text-slate-900">INV-{order.id}</strong>
               </p>
               <p className="text-[9px]">
-                <span className="text-slate-400">{language === 'ar' ? 'التاريخ:' : 'Date:'}</span> <span className="font-medium text-slate-600">{invoiceDate}</span>
+                <span className="text-slate-800 font-bold">{language === 'ar' ? 'التاريخ:' : 'Date:'}</span> <span className="font-extrabold text-slate-900">{invoiceDate}</span>
               </p>
               <p className="text-[9px]">
-                <span className="text-slate-400">{language === 'ar' ? 'حالة السداد:' : 'Status:'}</span> <span className="font-bold text-emerald-600">{order.paymentStatus.toUpperCase()}</span>
+                <span className="text-slate-800 font-bold">{language === 'ar' ? 'حالة السداد:' : 'Status:'}</span> <span className="font-bold text-purple-700">{order.paymentStatus.toUpperCase()}</span>
               </p>
             </div>
           </div>
@@ -123,23 +127,23 @@ export default function EInvoiceModal({ order, language, onClose, autoPrint = fa
           {/* Client & Contractor Details - Tight Margins */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-cream-100/60 p-2.5 rounded-xl border border-cream-200">
             <div>
-              <span className="text-[8px] font-bold uppercase tracking-wider text-emerald-600 block mb-0.5 font-sans flex items-center gap-0.5 leading-none">
-                <Building2 className="w-2.5 h-2.5 text-emerald-500" /> Seller / Issuer
+              <span className="text-[8px] font-bold uppercase tracking-wider text-purple-650 block mb-0.5 font-sans flex items-center gap-0.5 leading-none">
+                <Building2 className="w-2.5 h-2.5 text-purple-500" /> Seller / Issuer
               </span>
-              <h4 className="font-bold text-slate-800 text-[9px]">Madar Operations Agency</h4>
-              <p className="text-[8px] text-slate-400 leading-tight mt-0.5">
+              <h4 className="font-bold text-slate-900 text-[9px]">Madar Operations Agency</h4>
+              <p className="text-[8px] text-slate-800 font-bold leading-tight mt-0.5">
                 Riyadh Governorate, King Fahd Rd<br />
                 operations@madar.sa
               </p>
             </div>
             <div>
-              <span className="text-[8px] font-bold uppercase tracking-wider text-sage-600 block mb-0.5 font-sans flex items-center gap-0.5 leading-none">
-                <User className="w-2.5 h-2.5 text-sage-500" /> Purchaser / Client
+              <span className="text-[8px] font-bold uppercase tracking-wider text-sage-700 block mb-0.5 font-sans flex items-center gap-0.5 leading-none">
+                <User className="w-2.5 h-2.5 text-sage-605" /> Purchaser / Client
               </span>
-              <h4 className="font-bold text-slate-800 text-[9px]">{order.clientName}</h4>
-              <p className="text-[8px] text-slate-400 leading-tight mt-0.5 font-sans">
-                Client Phone: <strong className="font-semibold text-slate-600">{order.clientPhone}</strong><br />
-                <span className="text-slate-500 truncate block max-w-[120px]">{order.clientEmail}</span>
+              <h4 className="font-bold text-slate-900 text-[9px]">{order.clientName}</h4>
+              <p className="text-[8px] text-slate-800 font-bold leading-tight mt-0.5 font-sans">
+                Client Phone: <strong className="font-bold text-slate-900">{order.clientPhone}</strong><br />
+                <span className="text-slate-900 font-bold truncate block max-w-[120px]">{order.clientEmail}</span>
               </p>
             </div>
           </div>
@@ -148,25 +152,25 @@ export default function EInvoiceModal({ order, language, onClose, autoPrint = fa
           <div className="overflow-hidden">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 text-[8px] font-bold text-slate-450 uppercase tracking-wider">
+                <tr className="border-b border-slate-350 text-[8px] font-bold text-slate-900 uppercase tracking-wider">
                   <th className="py-1 pl-1">{language === 'ar' ? 'الخدمة ونطاق العمل' : 'Service & Scope Description'}</th>
                   <th className="py-1 text-right w-10">{language === 'ar' ? 'الكمية' : 'Qty'}</th>
                   <th className="py-1 text-right w-16">{language === 'ar' ? 'السعر' : 'Price'}</th>
                   <th className="py-1 text-right w-20 pr-1">{language === 'ar' ? 'المجموع' : 'Total'}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-[9px]">
-                <tr className="text-slate-800 font-sans">
+              <tbody className="divide-y divide-slate-200 text-[9px]">
+                <tr className="text-slate-900 font-sans">
                   <td className="py-2 pl-1 alignment-baseline">
-                    <div className="font-bold text-slate-900 text-[10px] leading-tight">{order.titleEnglish}</div>
-                    <div className="text-[8px] text-slate-400 mt-0.5 leading-snug truncate max-w-[170px]">{order.descriptionEnglish}</div>
-                    <div className="text-[9px] text-sage-600 font-arabic mt-0.5 font-medium" dir="rtl">
+                    <div className="font-black text-slate-900 text-[10px] leading-tight">{order.titleEnglish}</div>
+                    <div className="text-[8px] text-slate-805 font-bold mt-0.5 leading-snug truncate max-w-[170px]">{order.descriptionEnglish}</div>
+                    <div className="text-[9px] text-sage-800 font-arabic mt-0.5 font-bold" dir="rtl">
                       {order.titleArabic}: {order.descriptionArabic}
                     </div>
                   </td>
-                  <td className="py-2 text-right font-medium text-slate-500">1</td>
-                  <td className="py-2 text-right font-medium text-slate-500">{originalPriceToUse.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                  <td className="py-2 text-right pr-1 font-bold text-slate-800">
+                  <td className="py-2 text-right font-bold text-slate-900">1</td>
+                  <td className="py-2 text-right font-bold text-slate-950">{originalPriceToUse.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                  <td className="py-2 text-right pr-1 font-bold text-slate-950">
                     {originalPriceToUse.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                   </td>
                 </tr>
@@ -175,12 +179,12 @@ export default function EInvoiceModal({ order, language, onClose, autoPrint = fa
           </div>
 
           {/* Financial Totals & Compact QR Block */}
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-2 border-t border-slate-100 pt-2.5">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-2 border-t border-slate-200 pt-2.5">
             {/* Project Secure QR Block */}
-            <div className="flex items-center gap-2 border border-slate-100 p-1.5 rounded-lg bg-slate-50/50">
+            <div className="flex items-center gap-2 border border-slate-200 p-1.5 rounded-lg bg-slate-50/55">
               {/* QR Code SVG */}
-              <div className="w-10 h-10 bg-white border border-slate-200 rounded p-0.5 flex items-center justify-center relative shrink-0">
-                <svg viewBox="0 0 100 100" className="w-full h-full text-slate-800">
+              <div className="w-10 h-10 bg-white border border-slate-350 rounded p-0.5 flex items-center justify-center relative shrink-0">
+                <svg viewBox="0 0 100 100" className="w-full h-full text-slate-900">
                   <rect x="5" y="5" width="20" height="20" fill="currentColor" />
                   <rect x="8" y="8" width="14" height="14" fill="white" />
                   <rect x="11" y="11" width="8" height="8" fill="currentColor" />
@@ -211,11 +215,11 @@ export default function EInvoiceModal({ order, language, onClose, autoPrint = fa
                   <rect x="55" y="80" width="14" height="6" fill="currentColor" />
                   <rect x="75" y="75" width="6" height="12" fill="currentColor" />
                 </svg>
-                <span className="absolute inset-0 m-auto w-2.5 h-2.5 bg-emerald-600 rounded-xs flex items-center justify-center text-[4px] font-black text-white font-serif">M</span>
+                <span className="absolute inset-0 m-auto w-2.5 h-2.5 bg-purple-650 rounded-xs flex items-center justify-center text-[4px] font-black text-white font-serif">M</span>
               </div>
               <div className="space-y-0.5 leading-snug">
-                <span className="text-[7px] uppercase font-bold text-emerald-600 block">{language === 'ar' ? 'هوية العقد الإلكتروني' : 'Contract Integrity'}</span>
-                <p className="text-[8px] text-slate-400 max-w-[130px] leading-tight">
+                <span className="text-[7px] uppercase font-bold text-purple-650 block">{language === 'ar' ? 'هوية العقد الإلكتروني' : 'Contract Integrity'}</span>
+                <p className="text-[8px] text-slate-800 font-bold max-w-[130px] leading-tight">
                   {language === 'ar' 
                     ? 'رمز استجابة للتحقق.'
                     : 'System-generated project code.'}
@@ -226,27 +230,27 @@ export default function EInvoiceModal({ order, language, onClose, autoPrint = fa
             {/* Calculations column */}
             <div className="w-full sm:w-36 space-y-0.5 text-right leading-none">
               <div className="flex justify-between text-[9px]">
-                <span className="text-slate-450">{language === 'ar' ? 'المجموع الأساسي:' : 'Subtotal:'}</span>
-                <span className="font-semibold text-slate-700">{originalPriceToUse.toLocaleString('en-US', { minimumFractionDigits: 2 })} SAR</span>
+                <span className="text-slate-800 font-bold">{language === 'ar' ? 'المجموع الأساسي:' : 'Subtotal:'}</span>
+                <span className="font-extrabold text-slate-900">{originalPriceToUse.toLocaleString('en-US', { minimumFractionDigits: 2 })} SAR</span>
               </div>
 
               {discountPercent > 0 && (
-                <div className="flex justify-between text-[9px] text-rose-500 font-bold">
+                <div className="flex justify-between text-[9px] text-rose-600 font-black">
                   <span>{language === 'ar' ? `خصم (${discountPercent}%):` : `Discount (${discountPercent}%):`}</span>
                   <span>- {((originalPriceToUse * discountPercent) / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })} SAR</span>
                 </div>
               )}
               
-              <div className="border-t border-slate-100 my-0.5 pt-1 flex justify-between text-[10px]">
-                <span className="font-bold text-slate-800">{language === 'ar' ? 'المبلغ المستحق:' : 'Total net amount:'}</span>
-                <span className="font-bold text-sage-700 text-xs">{totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })} SAR</span>
+              <div className="border-t border-slate-350 my-0.5 pt-1 flex justify-between text-[10px]">
+                <span className="font-black text-slate-900">{language === 'ar' ? 'المبلغ المستحق:' : 'Total net amount:'}</span>
+                <span className="font-black text-purple-700 text-xs">{totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })} SAR</span>
               </div>
             </div>
           </div>
 
           {/* Footer of invoice - compact */}
-          <div className="border-t border-slate-100 pt-2 text-center text-[8px] text-slate-400 font-sans space-y-0.5 leading-tight">
-            <p className="font-bold text-slate-500">Thank you for partnering with Madar Development Platform.</p>
+          <div className="border-t border-slate-200 pt-2 text-center text-[8px] text-slate-800 font-sans space-y-0.5 leading-tight">
+            <p className="font-black text-slate-900">Thank you for partnering with Madar Development Platform.</p>
           </div>
 
           {/* Explicit Exit Action Block at the bottom - Hidden on Print */}
@@ -254,7 +258,7 @@ export default function EInvoiceModal({ order, language, onClose, autoPrint = fa
             <button
               id="bottom-invoice-exit-btn"
               onClick={onClose}
-              className="px-3 py-1 border border-slate-100 hover:bg-slate-50 text-slate-400 font-bold rounded-lg text-[9px] transition-colors cursor-pointer"
+              className="px-3 py-1 border border-slate-300 hover:bg-slate-50 text-slate-800 font-bold rounded-lg text-[9px] transition-colors cursor-pointer"
             >
               {language === 'ar' ? 'إغلاق المعاينة والرجوع' : 'Close and Return'}
             </button>

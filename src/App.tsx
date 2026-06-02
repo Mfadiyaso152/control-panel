@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Search, Sliders, DollarSign, ListTodo, Sparkles, 
-  HelpCircle, ChevronRight, Activity, TrendingUp, Compass, FileCheck
+  HelpCircle, ChevronRight, Activity, TrendingUp, Compass, FileCheck, Orbit
 } from 'lucide-react';
 import { Order, ExternalRevenue, ProfitSplits, Theme, Language } from './types';
 import { SEED_ORDERS, SEED_REVENUES, DEFAULT_SPLITS, DICTIONARY } from './data';
@@ -11,6 +11,7 @@ import OrdersPanel from './components/OrdersPanel';
 import FinancePanel from './components/FinancePanel';
 import EInvoiceModal from './components/EInvoiceModal';
 import LoginScreen from './components/LoginScreen';
+import madarLogo from './assets/images/madar_logo_1780431051075.png';
 import {
   testConnection,
   saveCloudOrder,
@@ -49,10 +50,7 @@ export default function App() {
     return saved ? JSON.parse(saved) : DEFAULT_SPLITS;
   });
 
-  const [theme, setTheme] = useState<Theme>(() => {
-    const saved = localStorage.getItem('saudicore_theme_v2');
-    return (saved as Theme) || 'light';
-  });
+  const [theme, setTheme] = useState<Theme>('light');
 
   const [language, setLanguage] = useState<Language>(() => {
     const saved = localStorage.getItem('saudicore_lang_v2');
@@ -83,8 +81,9 @@ export default function App() {
   }, [profitSplits]);
 
   useEffect(() => {
-    localStorage.setItem('saudicore_theme_v2', theme);
-  }, [theme]);
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('saudicore_theme_v2', 'light');
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('saudicore_lang_v2', language);
@@ -221,11 +220,12 @@ export default function App() {
           {/* Brand Identity / Titles */}
           <div className="space-y-1.5" id="brand-info">
             <div className="flex items-center gap-3">
-              <div className="relative w-11 h-11 bg-emerald-600 rounded-2xl flex items-center justify-center text-white font-serif font-black text-2xl shadow-lg shadow-emerald-650/25">
-                <span>م</span>
+              <div className="relative w-12 h-12 bg-white border border-purple-200 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-600/5 overflow-hidden">
+                <img src={madarLogo} className="w-full h-full object-cover" referrerPolicy="no-referrer" alt="Madar logo" />
               </div>
               <div className="leading-tight">
-                <h1 className="text-xl md:text-2xl font-serif font-bold text-slate-800 dark:text-white tracking-tight">
+                <h1 className="text-xl md:text-2xl font-serif font-black text-purple-950 dark:text-purple-200 tracking-tight flex items-center gap-2 bg-purple-50 dark:bg-purple-950/40 px-3.5 py-2.5 rounded-2xl border border-purple-100 dark:border-purple-950">
+                  <img src={madarLogo} className="w-6 h-6 rounded-md object-contain" referrerPolicy="no-referrer" alt="Madar icon" />
                   {language === 'ar' ? 'نظام مدار للتحكم' : 'Madar Control System'}
                 </h1>
               </div>
