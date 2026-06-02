@@ -80,17 +80,17 @@ export default function LoginScreen({ onLoginSuccess, language, setLanguage, the
             : 'bg-white border-slate-300 shadow-slate-200/80'
         }`}
       >
-        {/* Brand identity header */}
+         {/* Brand identity header */}
         <div className="text-center space-y-3 mb-8">
-          <div className="relative w-16 h-16 bg-white border border-purple-200 rounded-2.5xl flex items-center justify-center shadow-xl shadow-purple-500/10 mx-auto overflow-hidden">
+          <div className="relative w-16 h-16 bg-white border border-emerald-200 rounded-2.5xl flex items-center justify-center shadow-xl shadow-emerald-500/10 mx-auto overflow-hidden">
             <img src={madarLogo} className="w-full h-full object-cover" referrerPolicy="no-referrer" alt="Madar logo" />
           </div>
           <div className="space-y-1">
-            <h2 className="text-xl font-serif font-black tracking-tight text-purple-950 dark:text-purple-200 flex items-center justify-center gap-2 bg-purple-50 dark:bg-purple-950/40 px-3 py-2 rounded-2xl border border-purple-100 dark:border-purple-950">
+            <h2 className="text-xl font-serif font-black tracking-tight text-emerald-950 dark:text-emerald-200 flex items-center justify-center gap-2 bg-emerald-50/50 dark:bg-emerald-950/40 px-3 py-2 rounded-2xl border border-emerald-100 dark:border-emerald-950">
               <img src={madarLogo} className="w-5.5 h-5.5 rounded-md object-contain animate-pulse" referrerPolicy="no-referrer" alt="Madar icon" />
               {isAr ? 'نظام مدار للتحكم' : 'Madar Control System'}
             </h2>
-            <p className="text-[10px] font-extrabold text-purple-700 dark:text-purple-300 uppercase tracking-widest pt-1 leading-none">
+            <p className="text-[10px] font-extrabold text-emerald-700 dark:text-emerald-300 uppercase tracking-widest pt-1 leading-none">
               {isAr ? 'بوابة الأمن والتحكم الداخلي لموظفي مدار' : 'Internal Operation & Security Portal'}
             </p>
           </div>
@@ -131,7 +131,7 @@ export default function LoginScreen({ onLoginSuccess, language, setLanguage, the
                 maxLength={10}
                 required
                 disabled={loading}
-                className="w-full py-3 pl-20 pr-10 rounded-xl text-sm font-bold bg-slate-100 border border-slate-350 text-slate-900 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-purple-500 text-left"
+                className="w-full py-3 pl-20 pr-10 rounded-xl text-sm font-bold bg-slate-100 border border-slate-350 text-slate-900 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500 text-left"
                 dir="ltr"
               />
               <Phone className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-800" />
@@ -151,7 +151,7 @@ export default function LoginScreen({ onLoginSuccess, language, setLanguage, the
                 placeholder=""
                 required
                 disabled={loading}
-                className="w-full py-3 pl-10 pr-10 rounded-xl text-sm font-bold bg-slate-100 border border-slate-350 text-slate-900 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-purple-500 text-left"
+                className="w-full py-3 pl-10 pr-10 rounded-xl text-sm font-bold bg-slate-100 border border-slate-350 text-slate-900 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-emerald-500 text-left"
                 dir="ltr"
               />
               <Lock className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-800" />
@@ -180,7 +180,7 @@ export default function LoginScreen({ onLoginSuccess, language, setLanguage, the
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3.5 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-600/50 text-white font-bold rounded-xl text-xs transition-all tracking-wide shadow-lg shadow-purple-600/20 active:scale-98 flex items-center justify-center gap-1.5 cursor-pointer`}
+            className={`w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-600/50 text-white font-bold rounded-xl text-xs transition-with-all tracking-wide shadow-lg shadow-emerald-600/20 active:scale-98 flex items-center justify-center gap-1.5 cursor-pointer`}
           >
             {loading ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

@@ -111,8 +111,8 @@ export default function FloatingBubble({
             {/* Sidebar Header */}
             <div className={`p-6 border-b flex items-center justify-between ${theme === 'dark' ? 'border-sage-900' : 'border-cream-150'}`} id="sidebar-header">
               <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center relative ${theme === 'dark' ? 'bg-purple-950 text-purple-300' : 'bg-[#F3E8FF] text-purple-700 font-serif font-bold text-xl'}`}>
-                  <Orbit className="absolute -top-1 -right-1 w-4 h-4 text-purple-500 animate-spin" style={{ animationDuration: '6s' }} />
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center relative ${theme === 'dark' ? 'bg-emerald-950 text-emerald-300' : 'bg-[#D1FAE5] text-emerald-700 font-serif font-bold text-xl'}`}>
+                  <Orbit className="absolute -top-1 -right-1 w-4 h-4 text-emerald-500 animate-spin" style={{ animationDuration: '6s' }} />
                   <span>M</span>
                 </div>
                 <div>

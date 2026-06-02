@@ -301,7 +301,7 @@ export default function OrdersPanel({
         <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 py-3" id="active-panel-heading">
           <div>
             <h2 className="text-lg font-serif font-bold text-sage-800 flex items-center gap-2">
-              <Orbit className="w-5.5 h-5.5 text-purple-600 animate-spin" style={{ animationDuration: '8s' }} />
+              <Orbit className="w-5.5 h-5.5 text-emerald-600 animate-spin" style={{ animationDuration: '8s' }} />
               {isAr ? 'إدارة الطلبات الجارية والمشاريع' : 'Active Client Orders Desk'}
             </h2>
             <p className="text-xs text-slate-800 font-bold mt-0.5">
@@ -337,7 +337,7 @@ export default function OrdersPanel({
                 setIsPendingPreset(false);
                 setIsCreateOpen(true);
               }}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-purple-600/15 cursor-pointer transform hover:scale-[1.01]"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-emerald-600/15 cursor-pointer transform hover:scale-[1.01]"
             >
               <Plus className="w-4 h-4" />
               <span>{isAr ? 'إنشاء طلب جديد' : 'Register New Order'}</span>
@@ -379,13 +379,13 @@ export default function OrdersPanel({
 
       {tab === 'completed_orders' && (
         <div className="py-3 border-b border-cream-150 dark:border-sage-900" id="completed-panel-heading">
-          <h2 className="text-lg font-serif font-bold text-purple-600">
+          <h2 className="text-lg font-serif font-bold text-emerald-600">
             {isAr ? 'سجل الطلبات المكتملة المنتهية' : 'Completed Projects Registry (100%)'}
           </h2>
           <p className="text-xs text-slate-800 font-bold mt-0.5">
             {isAr 
-              ? 'الأرشيف المعتمد لكافة المشاريع التي تم تسليمها للعملاء وإنجازها بالكامل' 
-              : 'Indexed database of successfully finalized applications and visually perfect drafts'}
+               ? 'الأرشيف المعتمد لكافة المشاريع التي تم تسليمها للعملاء وإنجازها بالكامل' 
+               : 'Indexed database of successfully finalized applications and visually perfect drafts'}
           </p>
         </div>
       )}
@@ -425,11 +425,11 @@ export default function OrdersPanel({
         <div className={`p-10 rounded-2xl border text-center space-y-3 ${
           theme === 'dark' ? 'bg-sage-900/10 border-sage-900/30' : 'bg-white border-cream-200'
         }`} id="orders-empty-state">
-          <AlertCircle className="w-10 h-10 text-purple-600 mx-auto animate-bounce" />
+          <AlertCircle className="w-10 h-10 text-emerald-600 mx-auto animate-bounce" />
           <h3 className="text-xs font-black text-slate-900 uppercase tracking-wi">
             {tab === 'search' 
               ? (localSearchQuery ? (isAr ? 'لم يتم العثور على أي نتائج مطابقة للبحث' : 'No records match search') : (isAr ? 'الرجاء إدخال كلمات البحث بالجهة العلوية لعرض النتائج' : 'Please provide search keywords to find items'))
-              : (isAr ? 'لا توجد طلبات مسجلة في هذا القسم حالياً' : 'No orders found inside this ledger')}
+              : (isAr ? 'لا توجد طلبات مسجلة in هذا القسم حالياً' : 'No orders found inside this ledger')}
           </h3>
           <p className="text-[11px] text-slate-800 font-bold max-w-sm mx-auto leading-relaxed">
             {tab === 'active_orders' && (isAr ? 'يمكنك الضغط على زر "إنشاء طلب جديد" لتسجيل معاملة عميل وتحديد خدماته.' : 'Get started by creating a client metadata request.')}
@@ -464,21 +464,21 @@ export default function OrdersPanel({
                   {/* Left: ID & Title & client */}
                   <div className="space-y-1 leading-normal flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-[10px] font-mono font-extrabold bg-purple-100 dark:bg-purple-950 px-2.5 py-0.5 rounded-full text-purple-900 dark:text-purple-300 tracking-wider">
+                      <span className="text-[10px] font-mono font-extrabold bg-emerald-100 dark:bg-emerald-950 px-2.5 py-0.5 rounded-full text-emerald-900 dark:text-emerald-300 tracking-wider">
                         #{order.id}
                       </span>
                       <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md ${
                         order.paymentStatus === 'paid' 
-                          ? 'bg-purple-600/10 text-purple-700' 
+                          ? 'bg-emerald-600/10 text-emerald-700' 
                           : order.paymentStatus === 'pending'
-                            ? 'bg-amber-500/15 text-amber-900 font-black'
+                            ? 'bg-amber-500/15 text-amber-905 font-black'
                             : 'bg-slate-200 text-slate-900 font-extrabold'
                       }`}>
                         {order.paymentStatus === 'paid' ? (isAr ? 'تم سداد الدفعة' : 'Paid') : (isAr ? 'بانتظار السداد' : 'Pending')}
                       </span>
                       <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md ${
                         order.orderStatus === 'completed' 
-                          ? 'bg-purple-600/10 text-purple-700'
+                          ? 'bg-emerald-600/10 text-emerald-700'
                           : order.orderStatus === 'processing'
                             ? 'bg-blue-600/10 text-blue-800'
                             : order.orderStatus === 'cancelled'
@@ -573,7 +573,7 @@ export default function OrdersPanel({
                             theme === 'dark' ? 'bg-sage-950/30 border-sage-850' : 'bg-white border-cream-205'
                           }`}>
                             <h5 className="font-extrabold text-slate-900 dark:text-slate-200 flex items-center gap-1.5 text-xs border-b pb-1.5 border-cream-200 dark:border-sage-900">
-                              <Sliders className="w-4 h-4 text-purple-650" />
+                              <Sliders className="w-4 h-4 text-emerald-650" />
                               <span>{isAr ? 'تعديل الحالة والدفع' : 'Administrative Matrix'}</span>
                             </h5>
 
@@ -621,7 +621,7 @@ export default function OrdersPanel({
                           }`}>
                             <div>
                               <h5 className="font-extrabold text-slate-900 dark:text-slate-205 flex items-center gap-1.5 text-xs border-b pb-1.5 border-cream-200 dark:border-sage-900">
-                                <FileText className="w-4 h-4 text-purple-650" />
+                                <FileText className="w-4 h-4 text-emerald-650" />
                                 <span>{isAr ? 'فاتورة الطلب والخيارات' : 'Official Project Invoice'}</span>
                               </h5>
                               <p className="text-[10px] text-slate-805 font-bold leading-relaxed mt-2.5">
@@ -635,7 +635,7 @@ export default function OrdersPanel({
                               <button
                                 id={`view-invoice-btn-${order.id}`}
                                 onClick={() => onViewInvoice(order)}
-                                className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition-colors cursor-pointer"
+                                className="flex-1 flex items-center justify-center gap-1.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-colors cursor-pointer"
                               >
                                 <Eye className="w-4 h-4" />
                                 <span>{isAr ? 'عرض الفاتورة' : 'View invoice'}</span>
@@ -666,13 +666,13 @@ export default function OrdersPanel({
                         <div className="space-y-4" id={`client-whatsapp-out-${order.id}`}>
                           <div className="border-b pb-1.5 border-cream-200 dark:border-sage-900 flex justify-between items-center">
                             <h5 className="font-extrabold text-slate-900 dark:text-slate-200 flex items-center gap-1.5 text-xs">
-                              <MessageSquare className="w-4.5 h-4.5 text-purple-600" />
+                              <MessageSquare className="w-4.5 h-4.5 text-emerald-600" />
                               <span>{isAr ? 'إرسال تحديثات وإشعارات للعميل (واتساب مباشر)' : 'Broadcast Live WhatsApp Progress Dispatch'}</span>
                             </h5>
                             <button
                               id={`open-messaging-${order.id}`}
                               onClick={() => handleOpenMessaging(order)}
-                              className="text-xs font-black text-purple-600 hover:underline flex items-center gap-1 cursor-pointer"
+                              className="text-xs font-black text-emerald-600 hover:underline flex items-center gap-1 cursor-pointer"
                             >
                               <span>{isAr ? 'تجهيز الرسالة التلقائية' : 'Configure pre-set templates'}</span>
                             </button>
@@ -696,7 +696,7 @@ export default function OrdersPanel({
                                     onClick={() => handleTemplateChange(order, 'completed100')}
                                     className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                                       selectedMessageTemplate === 'completed100'
-                                        ? 'bg-purple-600 border-purple-650 text-white'
+                                        ? 'bg-emerald-600 border-emerald-650 text-white'
                                         : 'hover:bg-slate-100 dark:hover:bg-slate-900 border-cream-300 dark:border-sage-850 text-slate-800'
                                     }`}
                                   >
@@ -709,7 +709,7 @@ export default function OrdersPanel({
                                     onClick={() => handleTemplateChange(order, 'paymentReminder')}
                                     className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                                       selectedMessageTemplate === 'paymentReminder'
-                                        ? 'bg-purple-600 border-purple-650 text-white'
+                                        ? 'bg-emerald-600 border-emerald-650 text-white'
                                         : 'hover:bg-slate-100 dark:hover:bg-slate-900 border-cream-300 dark:border-sage-850 text-slate-800'
                                     }`}
                                   >
@@ -747,7 +747,7 @@ export default function OrdersPanel({
                                     id={`send-msg-btn-${order.id}`}
                                     type="button"
                                     onClick={() => handleSendWhatsAppSubmit(order)}
-                                    className="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                                    className="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                                   >
                                     <Phone className="w-3.5 h-3.5" />
                                     <span>{isAr ? 'إرسال وتوجيه للواتساب' : 'Open WhatsApp Chat'}</span>
@@ -786,7 +786,7 @@ export default function OrdersPanel({
               {/* Header */}
               <div className="flex items-center justify-between border-b pb-4 border-cream-200 dark:border-sage-855 shrink-0">
                 <div className="flex items-center gap-2.5">
-                  <div className={`p-2 rounded-lg ${isPendingPreset ? 'bg-amber-500/15 text-amber-600' : 'bg-purple-600/15 text-purple-600'}`}>
+                  <div className={`p-2 rounded-lg ${isPendingPreset ? 'bg-amber-500/15 text-amber-600' : 'bg-emerald-600/15 text-emerald-600'}`}>
                     {isPendingPreset ? <Clock className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
                   </div>
                   <div>
@@ -819,7 +819,7 @@ export default function OrdersPanel({
                 
                 {/* 1. Project identity / identification */}
                 <div className="space-y-3.5">
-                  <span className="text-[10px] font-black text-purple-700 uppercase tracking-widest block border-b pb-1 border-dotted border-cream-220 dark:border-sage-900">
+                  <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest block border-b pb-1 border-dotted border-cream-220 dark:border-sage-900">
                     {isAr ? 'بيانات ومعرف الطلب' : 'Order Identification Details'}
                   </span>
 
@@ -832,7 +832,7 @@ export default function OrdersPanel({
                         value={newOrderIdInput}
                         onChange={(e) => setNewOrderIdInput(e.target.value)}
                         placeholder=""
-                        className={`w-full p-2.5 text-xs rounded-xl border outline-none font-bold font-mono focus:border-purple-600 transition-colors ${
+                        className={`w-full p-2.5 text-xs rounded-xl border outline-none font-bold font-mono focus:border-emerald-600 transition-colors ${
                           theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-slate-100 border-cream-220 text-cream-950'
                         }`}
                       />
@@ -846,7 +846,7 @@ export default function OrdersPanel({
                         value={newClientName}
                         onChange={(e) => setNewClientName(e.target.value)}
                         placeholder=""
-                        className={`w-full p-2.5 text-xs rounded-xl border outline-none font-bold focus:border-purple-600 transition-colors ${
+                        className={`w-full p-2.5 text-xs rounded-xl border outline-none font-bold focus:border-emerald-600 transition-colors ${
                           theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-slate-100 border-cream-220 text-cream-950'
                         }`}
                       />
@@ -859,7 +859,7 @@ export default function OrdersPanel({
                         value={newClientPhone}
                         onChange={(e) => setNewClientPhone(e.target.value)}
                         placeholder=""
-                        className={`w-full p-2.5 text-xs rounded-xl border outline-none font-bold font-mono focus:border-purple-600 transition-colors ${
+                        className={`w-full p-2.5 text-xs rounded-xl border outline-none font-bold font-mono focus:border-emerald-600 transition-colors ${
                           theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-slate-100 border-cream-220 text-cream-950'
                         }`}
                       />
@@ -873,7 +873,7 @@ export default function OrdersPanel({
                       value={newClientEmail}
                       onChange={(e) => setNewClientEmail(e.target.value)}
                       placeholder=""
-                      className={`w-full p-2.5 text-xs rounded-xl border outline-none font-bold focus:border-purple-650 transition-colors ${
+                      className={`w-full p-2.5 text-xs rounded-xl border outline-none font-bold focus:border-emerald-650 transition-colors ${
                         theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white' : 'bg-slate-100 border-cream-220 text-cream-950'
                       }`}
                     />
@@ -882,7 +882,7 @@ export default function OrdersPanel({
 
                 {/* 2. Custom Services list with manageable names and prices */}
                 <div className="space-y-3.5">
-                  <span className="text-[11px] font-bold text-purple-600 uppercase tracking-widest block border-b pb-1 border-dotted border-cream-205 dark:border-sage-900">
+                  <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-widest block border-b pb-1 border-dotted border-cream-205 dark:border-sage-900">
                     {isAr ? 'تحديد الخدمات والمنتجات والتحكم بالأسعار' : 'Configure Custom Services & Manage Pricing'}
                   </span>
 
@@ -890,7 +890,7 @@ export default function OrdersPanel({
                     {customServices.map((srv, index) => (
                       <div key={srv.id} className="flex gap-2 items-center" id={`srv-row-${srv.id}`}>
                         {/* Service Item Index Badge */}
-                        <span className="w-5 h-5 rounded-md bg-purple-100 dark:bg-purple-950 text-purple-600 font-mono text-[10px] font-bold flex items-center justify-center shrink-0">
+                        <span className="w-5 h-5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-600 font-mono text-[10px] font-bold flex items-center justify-center shrink-0">
                           {index + 1}
                         </span>
 
@@ -906,7 +906,7 @@ export default function OrdersPanel({
                               setCustomServices(prev => prev.map(s => s.id === srv.id ? { ...s, name: value } : s));
                             }}
                             className={`w-full p-2 text-xs rounded-lg border outline-none font-semibold ${
-                              theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white focus:border-purple-600' : 'bg-white border-cream-200 text-cream-900 focus:border-purple-600'
+                              theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white focus:border-emerald-600' : 'bg-white border-cream-200 text-cream-900 focus:border-emerald-600'
                             }`}
                           />
                         </div>
@@ -924,7 +924,7 @@ export default function OrdersPanel({
                               setCustomServices(prev => prev.map(s => s.id === srv.id ? { ...s, price: value } : s));
                             }}
                             className={`w-full p-2 text-xs rounded-lg border outline-none font-bold font-mono ${
-                              theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white focus:border-purple-600' : 'bg-white border-cream-200 text-cream-900 focus:border-purple-600'
+                              theme === 'dark' ? 'bg-sage-950 border-sage-850 text-white focus:border-emerald-600' : 'bg-white border-cream-200 text-cream-900 focus:border-emerald-600'
                             }`}
                           />
                         </div>
@@ -952,7 +952,7 @@ export default function OrdersPanel({
                     onClick={() => {
                       setCustomServices(prev => [...prev, { id: Date.now().toString() + Math.random().toString().slice(-3), name: '', price: 0 }]);
                     }}
-                    className="flex items-center gap-1.5 px-3 py-1.5 border border-purple-300 text-purple-600 hover:bg-purple-50 rounded-lg text-[10px] font-bold transition-colors cursor-pointer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 border border-emerald-300 text-emerald-600 hover:bg-emerald-50 rounded-lg text-[10px] font-bold transition-colors cursor-pointer"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>{isAr ? 'إضافة خدمة أو منتج جديد' : 'Add custom service / product'}</span>
@@ -1033,7 +1033,7 @@ export default function OrdersPanel({
                       </div>
                       <div className="flex justify-between border-t border-cream-220 dark:border-sage-850 pt-1.5 mt-1.5 text-xs">
                         <span className="font-bold text-slate-800 dark:text-slate-350">{isAr ? 'صافي التكلفة النهائية المحسوبة:' : 'Net final order price:'}</span>
-                        <span className="font-bold font-mono text-purple-650 dark:text-purple-400 text-sm tracking-tight">{finalCalculatedPrice.toLocaleString()} ريال</span>
+                        <span className="font-bold font-mono text-emerald-600 dark:text-emerald-400 text-sm tracking-tight">{finalCalculatedPrice.toLocaleString()} ريال</span>
                       </div>
                     </div>
 

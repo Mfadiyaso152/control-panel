@@ -220,11 +220,11 @@ export default function App() {
           {/* Brand Identity / Titles */}
           <div className="space-y-1.5" id="brand-info">
             <div className="flex items-center gap-3">
-              <div className="relative w-12 h-12 bg-white border border-purple-200 rounded-2xl flex items-center justify-center shadow-lg shadow-purple-600/5 overflow-hidden">
+              <div className="relative w-12 h-12 bg-white border border-emerald-200 rounded-2xl flex items-center justify-center shadow-lg shadow-emerald-600/5 overflow-hidden">
                 <img src={madarLogo} className="w-full h-full object-cover" referrerPolicy="no-referrer" alt="Madar logo" />
               </div>
               <div className="leading-tight">
-                <h1 className="text-xl md:text-2xl font-serif font-black text-purple-950 dark:text-purple-200 tracking-tight flex items-center gap-2 bg-purple-50 dark:bg-purple-950/40 px-3.5 py-2.5 rounded-2xl border border-purple-100 dark:border-purple-950">
+                <h1 className="text-xl md:text-2xl font-serif font-black text-emerald-950 dark:text-emerald-200 tracking-tight flex items-center gap-2 bg-emerald-50/50 dark:bg-emerald-950/40 px-3.5 py-2.5 rounded-2xl border border-emerald-100 dark:border-emerald-950">
                   <img src={madarLogo} className="w-6 h-6 rounded-md object-contain" referrerPolicy="no-referrer" alt="Madar icon" />
                   {language === 'ar' ? 'نظام مدار للتحكم' : 'Madar Control System'}
                 </h1>

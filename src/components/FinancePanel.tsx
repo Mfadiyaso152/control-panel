@@ -64,17 +64,17 @@ export default function FinancePanel({
             : 'bg-gradient-to-tr from-sage-50 to-cream-100 border-cream-200 shadow-sm text-slate-900'
         }`} id="earnings-main-card">
           
-          <div className="absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-purple-600 to-purple-500" />
+          <div className="absolute top-0 right-0 left-0 h-1 bg-gradient-to-r from-emerald-600 to-emerald-500" />
           
           <div className="space-y-6">
             <div className="flex justify-between items-start">
               <div>
-                <span className="text-xs font-black text-purple-705 dark:text-purple-400 block uppercase tracking-wider">
+                <span className="text-xs font-black text-emerald-700 dark:text-emerald-400 block uppercase tracking-wider">
                   {isAr ? 'تقارير الأرباح والمبالغ الكلية للنظام' : 'Earning Metrics & Financial Breakdown'}
                 </span>
               </div>
-              <div className="p-3 bg-purple-500/10 text-purple-600 rounded-xl">
-                <DollarSign className="w-6 h-6 animate-pulse text-purple-600" />
+              <div className="p-3 bg-emerald-500/10 text-emerald-600 rounded-xl">
+                <DollarSign className="w-6 h-6 animate-pulse text-emerald-600" />
               </div>
             </div>
 
@@ -108,10 +108,10 @@ export default function FinancePanel({
 
               {/* Total Gross Profits */}
               <div className="space-y-1">
-                <span className="text-[11px] font-black text-purple-600 dark:text-purple-400 block uppercase tracking-wider">
+                <span className="text-[11px] font-black text-teal-600 dark:text-teal-400 block uppercase tracking-wider">
                   {isAr ? '📊 إجمالي القيمة الكلية للمشاريع' : 'Gross Total Value'}
                 </span>
-                <span className="text-2xl md:text-3xl font-serif font-black tracking-tight block text-purple-605 dark:text-purple-400">
+                <span className="text-2xl md:text-3xl font-serif font-black tracking-tight block text-teal-600 dark:text-teal-400">
                   {totalGross.toLocaleString()} <span className="text-sm font-bold">{isAr ? 'ريال' : 'SAR'}</span>
                 </span>
                 <span className="text-[10px] text-slate-500 font-extrabold block">
@@ -128,7 +128,7 @@ export default function FinancePanel({
           </div>
 
           <div className="flex items-center gap-2 mt-6 pt-6 border-t border-slate-100 dark:border-sage-850 text-xs text-slate-700 font-bold">
-            <ShieldCheck className="w-4 h-4 text-purple-650 shrink-0 select-none" />
+            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0 select-none" />
             <span>{isAr ? 'نظام الأرباح متوافق مع معايير الأمان والتحليلات لمدار.' : 'Security-compliant smart operational ledger interface.'}</span>
           </div>
         </div>
@@ -147,7 +147,7 @@ export default function FinancePanel({
               </span>
             </div>
             <div className="p-2.5 bg-slate-150 dark:bg-slate-800 text-slate-800 dark:text-slate-400 rounded-xl">
-              <Briefcase className="w-5 h-5 text-purple-600" />
+              <Briefcase className="w-5 h-5 text-emerald-600" />
             </div>
           </div>
 
@@ -162,7 +162,7 @@ export default function FinancePanel({
               </span>
             </div>
             <div className="p-2.5 bg-slate-150 dark:bg-slate-800 text-slate-800 dark:text-slate-400 rounded-xl">
-              <CreditCard className="w-5 h-5 text-purple-600" />
+              <CreditCard className="w-5 h-5 text-emerald-600" />
             </div>
           </div>
 
@@ -177,7 +177,7 @@ export default function FinancePanel({
               </span>
             </div>
             <div className="p-2.5 bg-slate-150 dark:bg-slate-800 text-slate-800 dark:text-slate-400 rounded-xl">
-              <Activity className="w-5 h-5 text-purple-600 shadow-xs" />
+              <Activity className="w-5 h-5 text-emerald-600 shadow-xs" />
             </div>
           </div>
 

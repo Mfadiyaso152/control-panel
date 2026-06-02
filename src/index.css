@@ -6,17 +6,17 @@
   --font-serif: "Playfair Display", "Cairo", Georgia, Georgia, serif;
   --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   
-  --color-sage-50: #faf5ff;
-  --color-sage-100: #f3e8ff;
-  --color-sage-200: #e9d5ff;
-  --color-sage-300: #d8b4fe;
-  --color-sage-450: #a855f7;
-  --color-sage-600: #9333ea;
-  --color-sage-700: #7e22ce;
-  --color-sage-800: #581c87;
-  --color-sage-900: #3b0764;
-  --color-sage-955: #020617;
-  --color-sage-950: #090d16;
+  --color-sage-50: #f4f8f5;
+  --color-sage-100: #e3ede6;
+  --color-sage-200: #c1dbca;
+  --color-sage-300: #9ac2a6;
+  --color-sage-450: #6ea17c;
+  --color-sage-600: #49825b;
+  --color-sage-700: #3c6b4b;
+  --color-sage-800: #2f543b;
+  --color-sage-900: #1b3022;
+  --color-sage-955: #0b140e;
+  --color-sage-950: #070d09;
   
   --color-cream-50: #ffffff;
   --color-cream-100: #f8fafc;
@@ -38,12 +38,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #9333ea40;
+  background: #49825b40;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9333ea80;
+  background: #49825b80;
 }
 
 /* Base resets & Arabic first enhancements */
